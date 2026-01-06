@@ -6,9 +6,11 @@ import { useCallback, useMemo, useRef } from "react"
 import { EventElement } from "./eventElement"
 
 function Timeline({
+  className,
   onStartChange,
   onEndChange,
 }: {
+  className?: string
   onStartChange?: (value: number) => void
   onEndChange?: (value: number) => void
 }) {
@@ -134,7 +136,8 @@ function Timeline({
       onMouseLeave={stopPanning}
       className={cn(
         "flex flex-col gap-8 py-64 overflow-x-hidden px-8",
-        isPanningRef.current && "cursor-grabbing"
+        isPanningRef.current && "cursor-grabbing",
+        className
       )}
     >
       <strong className='b-8'>{zoom}</strong>
