@@ -1,6 +1,5 @@
 import type { TimelineEvent } from "@/types/event"
-
-export const BIG_BANG_YEAR = -13_800_000_000
+import { BIG_BANG_YEAR } from "./world"
 
 export const EVENTS: TimelineEvent[] = [
   {
@@ -126,11 +125,29 @@ export const EVENTS: TimelineEvent[] = [
     tags: ["iran", "history"],
     description: "Rise of the Achaemenid Empire under Cyrus the Great",
   },
-
+  {
+    id: "year0",
+    title: "Year Zero",
+    startDate: { year: 0 },
+    description: "Rise of the Achaemenid Empire under Cyrus the Great",
+    links: {
+      Wikipedia: "https://en.wikipedia.org/wiki/Year_zero",
+    },
+  },
+  {
+    id: "internet",
+    title: "Development of the Internet",
+    startDate: { year: 1960 },
+    description:
+      "In the 1960s, computer scientists began developing systems for time-sharing of computer resources",
+    links: {
+      Wikipedia: "https://en.wikipedia.org/wiki/Internet",
+    },
+    tags: ["history", "technology"],
+  },
   {
     id: "2026",
     title: "Today!",
     startDate: { year: 2026 },
-    tags: ["cosmic"],
   },
 ].sort((a, b) => a.startDate.year - b.startDate.year)

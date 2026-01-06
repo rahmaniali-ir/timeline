@@ -1,6 +1,6 @@
 import { IranIcon } from "@/components/icons/iran"
 import type { EventTag } from "@/types/event"
-import { AtomIcon, EarthIcon } from "lucide-react"
+import { AtomIcon, EarthIcon, MonitorIcon } from "lucide-react"
 
 export const TAGS: EventTag[] = [
   {
@@ -20,5 +20,11 @@ export const TAGS: EventTag[] = [
     name: "Iran",
     color: "#10B981",
     icon: IranIcon,
+  },
+  {
+    id: "technology",
+    name: "Technology",
+    color: "oklch(60% 0.118 184.704)",
+    icon: MonitorIcon,
   },
 ]

@@ -1,5 +1,6 @@
 import { EVENTS } from "@/constants/events"
 import { TAGS } from "@/constants/tags"
+import { WORLD_MAX, WORLD_MIN } from "@/constants/world"
 import type { EventTag, TimelineEvent } from "@/types/event"
 import {
   createContext,
@@ -10,8 +11,14 @@ import {
 } from "react"
 
 interface TimelineContextType {
+  viewStart: number
+  viewEnd: number
+  range: number
+  zoom: number
   events: TimelineEvent[]
   tags: EventTag[]
+  setViewStart: (year: number) => void
+  setViewEnd: (year: number) => void
   setEvents: (events: TimelineEvent[]) => void
   setTags: (tags: EventTag[]) => void
   isTagActive: (id: string) => boolean
@@ -19,8 +26,14 @@ interface TimelineContextType {
 }
 
 const TimelineContext = createContext<TimelineContextType>({
+  viewStart: WORLD_MIN,
+  viewEnd: WORLD_MAX,
+  range: 0,
+  zoom: 1,
   events: [],
   tags: [],
+  setViewStart: (_: number) => {},
+  setViewEnd: (_: number) => {},
   setEvents: () => {},
   setTags: () => {},
   isTagActive: (_: string) => false,
@@ -31,6 +44,17 @@ export function TimelineProvider({ children }: { children: React.ReactNode }) {
   const [events, setEvents] = useState<TimelineEvent[]>(EVENTS)
   const [tags, setTags] = useState<EventTag[]>(TAGS)
   const [activeTags, setActiveTags] = useState<string[]>(["cosmic"])
+
+  const [viewStart, setViewStart] = useState(WORLD_MIN)
+  const [viewEnd, setViewEnd] = useState(WORLD_MAX)
+
+  const range = useMemo(() => viewEnd - viewStart, [viewEnd, viewStart])
+
+  const zoom = useMemo(() => {
+    const ratio = Math.abs(WORLD_MIN) / range
+
+    return Math.round(ratio)
+  }, [range])
 
   const visibleEvents = useMemo(
     () =>
@@ -58,8 +82,14 @@ export function TimelineProvider({ children }: { children: React.ReactNode }) {
   return (
     <TimelineContext.Provider
       value={{
+        viewStart,
+        viewEnd,
+        range,
+        zoom,
         events: visibleEvents,
         tags,
+        setViewStart,
+        setViewEnd,
         setEvents,
         setTags,
         isTagActive,

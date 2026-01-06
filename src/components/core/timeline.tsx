@@ -1,37 +1,23 @@
-import { BIG_BANG_YEAR } from "@/constants/events"
+import { WORLD_MIN } from "@/constants/world"
 import { useTimeline } from "@/contexts/timeline"
 import { cn } from "@/lib/utils"
 import type { PositionedEvent, TimelineEvent } from "@/types/event"
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useCallback, useMemo, useRef } from "react"
 import { EventElement } from "./eventElement"
 
 function Timeline({
-  start = BIG_BANG_YEAR,
-  end = new Date().getFullYear(),
   onStartChange,
   onEndChange,
 }: {
-  start?: number
-  end?: number
   onStartChange?: (value: number) => void
   onEndChange?: (value: number) => void
 }) {
-  const { events } = useTimeline()
+  const { events, viewStart, viewEnd, range, zoom, setViewStart, setViewEnd } =
+    useTimeline()
 
   const containerRef = useRef<HTMLDivElement>(null)
   const isPanningRef = useRef(false)
   const lastXRef = useRef(0)
-
-  const [viewStart, setViewStart] = useState(start)
-  const [viewEnd, setViewEnd] = useState(end)
-
-  const range = useMemo(() => viewEnd - viewStart, [viewEnd, viewStart])
-
-  const zoomLevel = useMemo(() => {
-    const ratio = Math.abs(BIG_BANG_YEAR) / range
-
-    return Math.round(ratio)
-  }, [range])
 
   const toPercent = useCallback(
     (value: number) => ((value - viewStart) / range) * 100,
@@ -84,8 +70,8 @@ function Timeline({
     let newEnd = newStart + newRange
 
     // clamp to world bounds
-    if (newStart < BIG_BANG_YEAR) {
-      newStart = BIG_BANG_YEAR
+    if (newStart < WORLD_MIN) {
+      newStart = WORLD_MIN
       newEnd = newStart + newRange
     }
     if (newEnd > new Date().getFullYear()) {
@@ -121,8 +107,8 @@ function Timeline({
     let newEnd = viewEnd - deltaTime
 
     // clamp
-    if (newStart < BIG_BANG_YEAR) {
-      newStart = BIG_BANG_YEAR
+    if (newStart < WORLD_MIN) {
+      newStart = WORLD_MIN
       newEnd = newStart + range
     }
     if (newEnd > new Date().getFullYear()) {
@@ -138,11 +124,6 @@ function Timeline({
     isPanningRef.current = false
   }
 
-  useEffect(() => {
-    setViewStart(start)
-    setViewEnd(end)
-  }, [start, end])
-
   return (
     <div
       ref={containerRef}
@@ -156,7 +137,7 @@ function Timeline({
         isPanningRef.current && "cursor-grabbing"
       )}
     >
-      <strong className='b-8'>{zoomLevel}</strong>
+      <strong className='b-8'>{zoom}</strong>
 
       <div className='relative flex h-1 bg-neutral-200 w-full'>
         {positionedEvents.map(e => (
