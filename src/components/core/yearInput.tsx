@@ -2,20 +2,7 @@ import { cn } from "@/lib/utils"
 import { ChevronDownIcon, ChevronUpIcon } from "lucide-react"
 import { useEffect, useMemo, useState } from "react"
 import { Button } from "../ui/button"
-
-const getFormattedValue = (value: number) => {
-  const absValue = Math.abs(value)
-
-  if (absValue < 1_000_000) return { value, unit: "" }
-
-  if (absValue < 1_000_000_000)
-    return { value: Math.round(value / 1_000_000), unit: "M" }
-
-  if (absValue < 1_000_000_000_000)
-    return { value: Math.round(value / 1_000_000_000), unit: "B" }
-
-  return { value: Math.round(value / 1_000_000_000_000), unit: "T" }
-}
+import { getFormattedYear } from "@/lib/time"
 
 export default function YearInput({
   value = 0,
@@ -26,6 +13,10 @@ export default function YearInput({
 }) {
   const [year, setYear] = useState({ value: 0, unit: "" })
 
+  const valueLength = useMemo(() => String(year.value).length, [year])
+
+  const inputWidth = useMemo(() => valueLength + 1 + "ch", [valueLength])
+
   const inputStep = useMemo(() => {
     if (year.unit === "M") return 1_000_000
     if (year.unit === "B") return 1_000_000_000
@@ -35,7 +26,7 @@ export default function YearInput({
   }, [year.unit])
 
   const changeValue = (value: number) => {
-    setYear(getFormattedValue(value))
+    setYear(getFormattedYear(value))
     onChange?.(value)
   }
 
@@ -50,7 +41,7 @@ export default function YearInput({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const targetValue = Number(e.target.value)
 
-    const { value, unit } = getFormattedValue(targetValue)
+    const { value, unit } = getFormattedYear(targetValue)
 
     if (unit === "M") changeValue(value * 1_000_000)
     if (unit === "B") changeValue(value * 1_000_000_000)
@@ -59,42 +50,45 @@ export default function YearInput({
   }
 
   useEffect(() => {
-    setYear(getFormattedValue(value ?? 0))
+    setYear(getFormattedYear(value ?? 0))
   }, [value])
 
   return (
-    <div className='group/yearInput flex items-center gap-1 py-1 ps-2 pe-1 rounded-lg hover:bg-neutral-200/50 focus-within:bg-neutral-200/75!'>
+    <label className='group/yearInput flex items-center gap-0.5 rounded-lg text-neutral-600 focus-within:text-neutral-800'>
       <input
         type='number'
         className={cn(
-          "font-semibold text-2xl w-20 outline-none",
+          "font-semibold text-lg outline-none text-center",
           "[&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         )}
         max={new Date().getFullYear()}
         value={year.value}
         step={inputStep}
         onChange={handleInputChange}
+        style={{
+          width: inputWidth,
+        }}
       />
 
       <strong>{year.unit}</strong>
 
-      <div className='flex flex-col gap-1'>
+      <div className='flex flex-col opacity-0 transition-opacity group-hover/yearInput:opacity-100'>
         <Button
           onClick={increment}
           variant='secondary'
-          className='size-4 rounded-sm!'
+          className='h-auto w-auto! p-0! rounded-sm!'
         >
-          <ChevronUpIcon className='size-4' />
+          <ChevronUpIcon className='size-3' />
         </Button>
 
         <Button
           onClick={decrement}
           variant='secondary'
-          className='size-4 rounded-sm!'
+          className='h-auto w-auto! p-0! rounded-sm!'
         >
-          <ChevronDownIcon className='size-4' />
+          <ChevronDownIcon className='size-3' />
         </Button>
       </div>
-    </div>
+    </label>
   )
 }

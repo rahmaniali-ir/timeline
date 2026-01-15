@@ -1,9 +1,10 @@
 import { WORLD_MIN } from "@/constants/world"
 import { useTimeline } from "@/contexts/timeline"
 import { cn } from "@/lib/utils"
-import type { PositionedEvent, TimelineEvent } from "@/types/event"
-import { useCallback, useMemo, useRef } from "react"
+import type { PositionedEvent } from "@/types/event"
+import { useMemo, useRef } from "react"
 import { EventElement } from "./eventElement"
+import { WorldMap } from "./worldMap"
 
 function Timeline({
   className,
@@ -14,26 +15,21 @@ function Timeline({
   onStartChange?: (value: number) => void
   onEndChange?: (value: number) => void
 }) {
-  const { events, viewStart, viewEnd, range, zoom, setViewStart, setViewEnd } =
-    useTimeline()
+  const {
+    events,
+    viewStart,
+    viewEnd,
+    range,
+    zoom,
+    setViewStart,
+    setViewEnd,
+    toPercent,
+    isEventInView,
+  } = useTimeline()
 
   const containerRef = useRef<HTMLDivElement>(null)
   const isPanningRef = useRef(false)
   const lastXRef = useRef(0)
-
-  const toPercent = useCallback(
-    (value: number) => ((value - viewStart) / range) * 100,
-    [viewStart, range]
-  )
-
-  const isEventInView = useCallback(
-    (e: TimelineEvent) => {
-      const eventEnd = e.endDate?.year ?? e.startDate.year
-
-      return e.startDate.year >= viewStart && eventEnd <= viewEnd
-    },
-    [viewStart, viewEnd]
-  )
 
   const positionedEvents: PositionedEvent[] = useMemo(() => {
     return events.filter(isEventInView).map(e => ({
@@ -128,29 +124,38 @@ function Timeline({
 
   return (
     <div
-      ref={containerRef}
-      onWheel={onWheel}
-      onMouseDown={onMouseDown}
-      onMouseMove={onMouseMove}
-      onMouseUp={stopPanning}
-      onMouseLeave={stopPanning}
       className={cn(
-        "flex flex-col gap-8 py-64 overflow-x-hidden px-8",
-        isPanningRef.current && "cursor-grabbing",
+        "flex-1 relative flex items-end mask-x overflow-hidden",
         className
       )}
     >
-      <strong className='b-8'>{zoom}</strong>
+      <WorldMap className='absolute inset-0 p-16 text-neutral-200' />
 
-      <div className='relative flex h-1 bg-neutral-200 w-full'>
-        {positionedEvents.map(e => (
-          <EventElement
-            key={e.event.id}
-            event={e.event}
-            left={e.left}
-            width={e.width}
-          />
-        ))}
+      <div
+        ref={containerRef}
+        onWheel={onWheel}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseUp={stopPanning}
+        onMouseLeave={stopPanning}
+        className={cn(
+          "absolute left-0 bottom-0 w-full flex flex-col gap-8 justify-end pt-24 pb-64 px-8",
+          "bg-linear-to-b from-transparent to-background",
+          isPanningRef.current && "cursor-grabbing"
+        )}
+      >
+        <strong className='b-8'>{zoom}</strong>
+
+        <div className='relative flex h-1 bg-neutral-200 w-full'>
+          {positionedEvents.map(e => (
+            <EventElement
+              key={e.event.id}
+              event={e.event}
+              left={e.left}
+              width={e.width}
+            />
+          ))}
+        </div>
       </div>
     </div>
   )
