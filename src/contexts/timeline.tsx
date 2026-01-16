@@ -28,9 +28,11 @@ interface TimelineContextType {
   isEventInView: (event: TimelineEvent) => boolean
   setTags: (tags: EventTag[]) => void
   isTagActive: (id: string) => boolean
+  setActiveTags: (tags: string[]) => void
   toggleTag: (id: string) => void
   startCountryHovering: (country: string) => void
   endCountryHovering: (country: string) => void
+  getTagEvents: (tagId: string) => TimelineEvent[]
 }
 
 const TimelineContext = createContext<TimelineContextType>({
@@ -48,10 +50,12 @@ const TimelineContext = createContext<TimelineContextType>({
   setEvents: () => {},
   isEventInView: (_: TimelineEvent) => false,
   setTags: () => {},
+  setActiveTags: () => {},
   isTagActive: (_: string) => false,
   toggleTag: (_: string) => {},
   startCountryHovering: (_: string) => {},
   endCountryHovering: (_: string) => {},
+  getTagEvents: (_: string) => [],
 })
 
 export function TimelineProvider({ children }: { children: React.ReactNode }) {
@@ -143,6 +147,14 @@ export function TimelineProvider({ children }: { children: React.ReactNode }) {
     setHoveredCounteries(countries => countries.filter(c => c !== country))
   }, [])
 
+  const getTagEvents = useCallback(
+    (tagId: string) =>
+      EVENTS.filter(e =>
+        e.tags?.some(t => t === tagId || t.startsWith(tagId + ":"))
+      ),
+    []
+  )
+
   useEffect(() => {
     const paramTagsString = params["tags"] || undefined
     const paramTags = paramTagsString?.split(",") ?? []
@@ -168,11 +180,13 @@ export function TimelineProvider({ children }: { children: React.ReactNode }) {
         toPercent,
         setEvents,
         setTags,
+        setActiveTags,
         isEventInView,
         isTagActive,
         toggleTag,
         startCountryHovering,
         endCountryHovering,
+        getTagEvents,
       }}
     >
       {children}

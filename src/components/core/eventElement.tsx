@@ -1,4 +1,5 @@
 import { useTimeline } from "@/contexts/timeline"
+import { getFormattedYear } from "@/lib/time"
 import { cn } from "@/lib/utils"
 import type { EventTag, PositionedEvent } from "@/types/event"
 import { CalendarIcon } from "lucide-react"
@@ -12,8 +13,10 @@ export function EventElement({ event, left, width }: PositionedEvent) {
 
   const startDate = event.startDate
   const endDate = event.endDate ?? startDate
-
   const hasRange = "endDate" in event
+
+  const startYear = getFormattedYear(startDate.year)
+  const endYear = getFormattedYear(endDate.year)
 
   const eventTags = useMemo(() => {
     return tags.filter(tag => event.tags?.includes(tag.id))
@@ -32,14 +35,12 @@ export function EventElement({ event, left, width }: PositionedEvent) {
     [event]
   )
 
-  const tagsConicGradient = useMemo(() => {
+  const tagsGradient = useMemo(() => {
     const colorStops = tagsColors.map(
       (color, index) => `${color} ${(index / tagsColors.length) * 100}%`
     )
 
-    colorStops.push(tagsColors[0])
-
-    return `conic-gradient(${colorStops.join(", ")})`
+    return `linear-gradient(to right, ${colorStops.join(", ")})`
   }, [tagsColors])
 
   const images = useMemo(() => event.images ?? [], [])
@@ -65,17 +66,55 @@ export function EventElement({ event, left, width }: PositionedEvent) {
       }}
       className='group/event absolute top-1/2 -translate-y-1/2 hover:z-10'
     >
+      {/* back image */}
+      {mainImage && !imageError && (
+        <img
+          src={mainImage}
+          alt={event.title}
+          onError={() => setImageError(true)}
+          className={cn(
+            "absolute left-0 bottom-0 w-full ellipse-mask-b object-cover object-top rounded-[inherit] pointer-events-none mix-blend-darken -z-10 opacity-0",
+            "mix-blend-mode-darken max-h-[200px] transition-all duration-500 group-hover/event:opacity-50"
+          )}
+        />
+      )}
+
+      {/* indicator */}
       <div
         className={cn(
-          "h-2.5 w-full absolute top-1/2 left-1/2 -translate-1/2 bg-neutral-200 z-20",
-          "animate-scale-y border-x border-neutral-400",
-          "transition-transform duration-300 group-hover/event:scale-y-150"
+          "h-2.5 animate-scale-y absolute w-full top-1/2 left-1/2 -translate-1/2 bg-neutral-200 z-20 rounded-full",
+          "transition-all duration-300 group-hover/event:bg-neutral-400 group-hover/event:h-3.5",
+          "before:absolute before:left-1/2 before:-translate-x-1/2 before:w-full before:h-full before:border-2 before:border-neutral-400 before:rounded-full before:mix-blend-darken"
         )}
-        // style={{
-        //   background: tagsConicGradient,
-        // }}
+        style={{
+          background: tagsGradient,
+        }}
       />
 
+      {/* range labels */}
+      <div
+        className={cn(
+          "absolute bottom-full left-0 w-full text-xs font-mono opacity-0 translate-y-4 pointer-events-none transition-all",
+          "group-hover/event:opacity-100 group-hover/event:translate-y-2"
+        )}
+      >
+        <div
+          className={cn(
+            "absolute origin-left left-0 bottom-4 -rotate-90",
+            !hasRange && "left-0"
+          )}
+        >
+          {startYear.value} {startYear.unit}
+        </div>
+
+        {hasRange && (
+          <div className='absolute origin-left translate-x-3/4 right-0 bottom-4 -rotate-90'>
+            {endYear.value} {endYear.unit}
+          </div>
+        )}
+      </div>
+
+      {/* event image */}
       {mainImage && (
         <div
           className={cn(
@@ -99,6 +138,7 @@ export function EventElement({ event, left, width }: PositionedEvent) {
         </div>
       )}
 
+      {/* event details */}
       <div
         className={cn(
           "hidden absolute bottom-[calc(100%+80px)] left-1/2 -translate-x-1/2 p-2 text-xs rounded-sm",
@@ -117,19 +157,23 @@ export function EventElement({ event, left, width }: PositionedEvent) {
           <img
             src={mainImage}
             alt={event.title}
-            className='w-full max-h-24 object-cover rounded-sm'
+            className='w-full max-h-32 object-cover rounded-sm'
           />
         )}
 
         <strong className='text-nowrap'>{event.title}</strong>
 
         <div className='flex items-center gap-2'>
-          <small>{startDate.year}</small>
+          <small>
+            {startYear.value} {startYear.unit}
+          </small>
 
           {hasRange && (
             <>
               <small className='text-neutral-400'>–</small>
-              <small>{endDate.year}</small>
+              <small>
+                {endYear.value} {endYear.unit}
+              </small>
             </>
           )}
         </div>
@@ -138,7 +182,7 @@ export function EventElement({ event, left, width }: PositionedEvent) {
           <p className='text-neutral-600 mt-1'>{event.description}</p>
         )}
 
-        {links.length && (
+        {links.length > 0 && (
           <small className='flex items-center gap-2 flex-wrap mt-2'>
             {links.map(([title, href], index) => (
               <a
@@ -154,6 +198,7 @@ export function EventElement({ event, left, width }: PositionedEvent) {
         )}
       </div>
 
+      {/* title */}
       <div
         className={cn(
           "animate-appear absolute px-2 origin-left top-0 rotate-90 text-nowrap text-xs isolate group-hover/event:letter-spacing-2 group-hover/event:font-semibold",

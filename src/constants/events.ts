@@ -1,5 +1,5 @@
 import type { TimelineEvent } from "@/types/event"
-import { BIG_BANG_YEAR, CURRENT_YEAR } from "./world"
+import { BIG_BANG_YEAR, CURRENT_YEAR, WORLD_MAX } from "./world"
 
 export const EVENTS: TimelineEvent[] = [
   {
@@ -91,6 +91,7 @@ export const EVENTS: TimelineEvent[] = [
     tags: ["knowledge:cosmic"],
     description:
       "A prolonged period of global cooling marked by recurring glacial cycles that reshaped Earth's surface and influenced the evolution and spread of early humans.",
+    images: ["/images/ice-age.jpg"],
   },
   {
     id: "humans",
@@ -205,7 +206,7 @@ export const EVENTS: TimelineEvent[] = [
     title: "Rashidun Caliphate (Iran)",
     startDate: { year: 651 },
     endDate: { year: 661 },
-    tags: ["history:country:iran", "religion:islamic"],
+    tags: ["history:country:iran", "history:religion:islam"],
     description:
       "The first Islamic rule over Iran following the fall of the Sassanids.",
     links: {
@@ -221,7 +222,7 @@ export const EVENTS: TimelineEvent[] = [
     title: "Umayyad Caliphate (Iran)",
     startDate: { year: 661 },
     endDate: { year: 750 },
-    tags: ["history:country:iran", "religion:islamic"],
+    tags: ["history:country:iran", "history:religion:islam"],
     description:
       "Arab caliphate that governed Iran as part of a vast Islamic empire.",
     links: {
@@ -237,7 +238,7 @@ export const EVENTS: TimelineEvent[] = [
     title: "Abbasid Caliphate (Iran)",
     startDate: { year: 750 },
     endDate: { year: 1258 },
-    tags: ["history:country:iran", "religion:islamic"],
+    tags: ["history:country:iran", "history:religion:islam"],
     description:
       "Persian-influenced Islamic caliphate with Baghdad as its center.",
     links: {
@@ -253,7 +254,7 @@ export const EVENTS: TimelineEvent[] = [
     title: "Safavid Empire",
     startDate: { year: 1501 },
     endDate: { year: 1736 },
-    tags: ["history:country:iran"],
+    tags: ["history:country:iran", "history:religion:islam"],
     description:
       "Established Twelver Shia Islam as the state religion of Iran.",
     links: {
@@ -314,7 +315,10 @@ export const EVENTS: TimelineEvent[] = [
     title: "Pahlavi Dynasty",
     startDate: { year: 1925 },
     endDate: { year: 1979 },
-    tags: ["iran", "history", "modern"],
+    tags: [
+      "history:country:iran",
+      "history:country:iran:government:pahlavi-dynesty",
+    ],
     description:
       "Modernizing monarchy that ruled Iran before the Islamic Revolution.",
     links: {
@@ -330,7 +334,7 @@ export const EVENTS: TimelineEvent[] = [
     title: "Islamic Republic of Iran",
     startDate: { year: 1979 },
     endDate: { year: 2026 },
-    tags: ["iran", "history", "modern"],
+    tags: ["history:country:iran", "history:religion:islam"],
     description:
       "Current government of Iran established after the 1979 Islamic Revolution.",
     links: {
@@ -342,11 +346,46 @@ export const EVENTS: TimelineEvent[] = [
     counteries: ["ir"],
   },
   {
+    id: "iran-iraq-war",
+    title: "Iran - Iraq War",
+    startDate: { year: 1979 },
+    endDate: { year: 1987 },
+    tags: [
+      "history:country:iran",
+      "history:war:iran-iraq",
+      "history:country:iran:government:islamic-republic",
+      "history:religion:islam",
+    ],
+    images: ["/images/iran-iraq-war.jpg"],
+    counteries: ["ir"],
+  },
+  {
     id: "iran",
     title: "Formation of Iran",
     startDate: { year: -550 },
     tags: ["history:country:iran"],
     description: "Rise of the Achaemenid Empire under Cyrus the Great",
+    counteries: ["ir"],
+  },
+  {
+    id: "iran-crime-1388",
+    title: "Suppression of the Green Revolution",
+    startDate: { year: 2010 },
+    tags: ["history:country:iran:government:islamic-republic:crime"],
+    counteries: ["ir"],
+  },
+  {
+    id: "iran-crime-1401",
+    title: "Killing of Mahsa Amini",
+    startDate: { year: 2023 },
+    tags: ["history:country:iran:government:islamic-republic:crime"],
+    counteries: ["ir"],
+  },
+  {
+    id: "iran-crime-1404",
+    title: "Suppression of peacful protstors",
+    startDate: { year: 2026 },
+    tags: ["history:country:iran:government:islamic-republic:crime"],
     counteries: ["ir"],
   },
   {
@@ -367,12 +406,18 @@ export const EVENTS: TimelineEvent[] = [
     links: {
       Wikipedia: "https://en.wikipedia.org/wiki/Internet",
     },
-    tags: ["history", "technology"],
+    tags: ["history:country:usa", "knowledge:technology"],
+    counteries: ["us"],
   },
   {
     id: String(CURRENT_YEAR),
     title: "Today!",
     startDate: { year: CURRENT_YEAR },
+  },
+  {
+    id: String(WORLD_MAX),
+    title: "2027",
+    startDate: { year: WORLD_MAX },
   },
   {
     id: "2000",
@@ -383,7 +428,7 @@ export const EVENTS: TimelineEvent[] = [
     id: "tool-fearInoculum",
     title: "Fear Inoculum",
     startDate: { year: 2019 },
-    tags: ["art:music:tool"],
+    tags: ["art:music:band:tool"],
     links: {
       Spotify: "https://open.spotify.com/artist/tool",
     },
@@ -394,7 +439,7 @@ export const EVENTS: TimelineEvent[] = [
     id: "tool-10000Days",
     title: "10,000 Days",
     startDate: { year: 2012 },
-    tags: ["art:music:tool"],
+    tags: ["art:music:band:tool"],
     links: {
       Spotify: "https://open.spotify.com/artist/tool",
     },
@@ -405,7 +450,7 @@ export const EVENTS: TimelineEvent[] = [
     id: "tool-lateralus",
     title: "Lateralus",
     startDate: { year: 2008 },
-    tags: ["art:music:tool"],
+    tags: ["art:music:band:tool"],
     links: {
       Spotify: "https://open.spotify.com/artist/tool",
     },
@@ -416,7 +461,7 @@ export const EVENTS: TimelineEvent[] = [
     id: "tool-Ænima",
     title: "Ænima",
     startDate: { year: 2000 },
-    tags: ["art:music:tool"],
+    tags: ["art:music:band:tool"],
     links: {
       Spotify: "https://open.spotify.com/artist/tool",
     },
@@ -427,7 +472,7 @@ export const EVENTS: TimelineEvent[] = [
     id: "tool-underflow",
     title: "Underflow",
     startDate: { year: 1993 },
-    tags: ["art:music:tool"],
+    tags: ["art:music:band:tool"],
     links: {
       Spotify: "https://open.spotify.com/artist/tool",
     },
@@ -438,11 +483,140 @@ export const EVENTS: TimelineEvent[] = [
     id: "archive-glassMinds",
     title: "Glass Minds",
     startDate: { year: 2026 },
-    tags: ["art:music:archive"],
+    tags: ["art:music:band:archive"],
     links: {
       Spotify: "https://open.spotify.com/artist/archive",
     },
     images: ["/images/archive-glassMinds.png"],
     counteries: ["us"],
+  },
+  {
+    id: "kubrick-eyes-wide-shut",
+    title: "Eyes Wide Shut",
+    startDate: { year: 2000 },
+    tags: ["art:movie:director:kubrick"],
+    counteries: ["us"],
+  },
+  {
+    id: "kubrick-shining",
+    title: "Shining",
+    startDate: { year: 1998 },
+    tags: ["art:movie:director:kubrick"],
+    counteries: ["us"],
+  },
+  {
+    id: "kubrick-full-metal-jacket",
+    title: "Full Metal Jacket",
+    startDate: { year: 1997 },
+    tags: ["art:movie:director:kubrick"],
+    counteries: ["us"],
+  },
+  {
+    id: "tarantino-once-upon-a-time",
+    title: "Once Upon A Time In Hollywood",
+    startDate: { year: 2020 },
+    tags: ["art:movie:director:tarantino"],
+    counteries: ["us"],
+  },
+  {
+    id: "nolan-following",
+    title: "Following",
+    startDate: { year: 1998 },
+    tags: ["art:movie:director:nolan"],
+    counteries: ["us"],
+    description: "Nolan's very first feature film",
+  },
+  {
+    id: "nolan-memento",
+    title: "Memento",
+    startDate: { year: 2000 },
+    tags: ["art:movie:director:nolan"],
+    counteries: ["us"],
+  },
+  {
+    id: "nolan-insomnia",
+    title: "Insomnia",
+    startDate: { year: 2002 },
+    tags: ["art:movie:director:nolan"],
+    counteries: ["us"],
+  },
+  {
+    id: "nolan-batman-begins",
+    title: "Batman Begins",
+    startDate: { year: 2005 },
+    tags: ["art:movie:director:nolan"],
+    counteries: ["us"],
+  },
+  {
+    id: "nolan-prestige",
+    title: "Prestige",
+    startDate: { year: 2006 },
+    tags: ["art:movie:director:nolan"],
+    counteries: ["us"],
+  },
+  {
+    id: "nolan-the-dark-knight",
+    title: "The Dark Knight",
+    startDate: { year: 2008 },
+    tags: ["art:movie:director:nolan"],
+    counteries: ["us"],
+  },
+  {
+    id: "nolan-inception",
+    title: "Inception",
+    startDate: { year: 2010 },
+    tags: ["art:movie:director:nolan"],
+    counteries: ["us"],
+  },
+  {
+    id: "nolan-the-dark-knight-rises",
+    title: "The Dark Knight Rises",
+    startDate: { year: 2012 },
+    tags: ["art:movie:director:nolan"],
+    counteries: ["us"],
+  },
+  {
+    id: "nolan-interstellar",
+    title: "Interstellar",
+    startDate: { year: 2014 },
+    tags: ["art:movie:director:nolan"],
+    counteries: ["us"],
+  },
+  {
+    id: "nolan-dunkirk",
+    title: "Dunkirk",
+    startDate: { year: 2017 },
+    tags: ["art:movie:director:nolan"],
+    counteries: ["us"],
+  },
+  {
+    id: "nolan-tenet",
+    title: "Tenet",
+    startDate: { year: 2020 },
+    tags: ["art:movie:director:nolan"],
+    counteries: ["us"],
+  },
+  {
+    id: "nolan-oppenheimer",
+    title: "Oppenheimer",
+    startDate: { year: 2023 },
+    tags: ["art:movie:director:nolan"],
+    counteries: ["us"],
+  },
+  {
+    id: "space-apollo-11",
+    title: "Apollo 11",
+    startDate: { year: 1969 },
+    tags: ["knowledge:space"],
+    counteries: ["us"],
+  },
+  {
+    id: "crusades",
+    title: "Crusades",
+    startDate: { year: 488 },
+    endDate: { year: 1291 },
+    tags: ["history:war:crusades", "history:religion:christianity"],
+    counteries: ["il"],
+    images: ["images/cruseds.png"],
   },
 ].sort((a, b) => a.startDate.year - b.startDate.year)

@@ -1,4 +1,4 @@
-import { WORLD_MIN } from "@/constants/world"
+import { WORLD_MAX, WORLD_MIN } from "@/constants/world"
 import { useTimeline } from "@/contexts/timeline"
 import { cn } from "@/lib/utils"
 import type { PositionedEvent } from "@/types/event"
@@ -109,8 +109,8 @@ function Timeline({
       newStart = WORLD_MIN
       newEnd = newStart + range
     }
-    if (newEnd > new Date().getFullYear()) {
-      newEnd = new Date().getFullYear()
+    if (newEnd > WORLD_MAX) {
+      newEnd = WORLD_MAX
       newStart = newEnd - range
     }
 
