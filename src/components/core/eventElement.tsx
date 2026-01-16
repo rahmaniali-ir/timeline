@@ -141,17 +141,11 @@ export function EventElement({ event, left, width }: PositionedEvent) {
       {/* event details */}
       <div
         className={cn(
-          "hidden absolute bottom-[calc(100%+80px)] left-1/2 -translate-x-1/2 p-2 text-xs rounded-sm",
+          "hidden absolute bottom-[calc(100%+80px)] left-1/2 -translate-x-1/2 p-2 text-xs rounded-md",
           "bg-neutral-200 border border-neutral-300",
           "group-hover/event:flex transition-opacity duration-300",
           "flex-col gap-1 w-[200px]"
         )}
-        // style={{
-        //   translate:
-        //     left < 50
-        //       ? `calc(-50% + ${50 - left}%) 0`
-        //       : `calc(-50% - ${left - 50}%) 0`,
-        // }}
       >
         {mainImage && !imageError && (
           <img

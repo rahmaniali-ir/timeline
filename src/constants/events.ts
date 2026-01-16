@@ -525,6 +525,7 @@ export const EVENTS: TimelineEvent[] = [
     tags: ["art:movie:director:nolan"],
     counteries: ["us"],
     description: "Nolan's very first feature film",
+    images: ["/images/nolan-following.png"],
   },
   {
     id: "nolan-memento",
@@ -532,12 +533,14 @@ export const EVENTS: TimelineEvent[] = [
     startDate: { year: 2000 },
     tags: ["art:movie:director:nolan"],
     counteries: ["us"],
+    images: ["/images/nolan-memento.png"],
   },
   {
     id: "nolan-insomnia",
     title: "Insomnia",
     startDate: { year: 2002 },
     tags: ["art:movie:director:nolan"],
+    images: ["/images/nolan-insomnia.png"],
     counteries: ["us"],
   },
   {
@@ -545,6 +548,7 @@ export const EVENTS: TimelineEvent[] = [
     title: "Batman Begins",
     startDate: { year: 2005 },
     tags: ["art:movie:director:nolan"],
+    images: ["/images/nolan-batman-begins.png"],
     counteries: ["us"],
   },
   {
@@ -559,6 +563,7 @@ export const EVENTS: TimelineEvent[] = [
     title: "The Dark Knight",
     startDate: { year: 2008 },
     tags: ["art:movie:director:nolan"],
+    images: ["/images/nolan-the-dark-knight.png"],
     counteries: ["us"],
   },
   {
@@ -566,6 +571,7 @@ export const EVENTS: TimelineEvent[] = [
     title: "Inception",
     startDate: { year: 2010 },
     tags: ["art:movie:director:nolan"],
+    images: ["/images/nolan-inception.png"],
     counteries: ["us"],
   },
   {
@@ -573,6 +579,7 @@ export const EVENTS: TimelineEvent[] = [
     title: "The Dark Knight Rises",
     startDate: { year: 2012 },
     tags: ["art:movie:director:nolan"],
+    images: ["/images/nolan-the-dark-knight-rises.png"],
     counteries: ["us"],
   },
   {
@@ -580,6 +587,7 @@ export const EVENTS: TimelineEvent[] = [
     title: "Interstellar",
     startDate: { year: 2014 },
     tags: ["art:movie:director:nolan"],
+    images: ["/images/nolan-interstellar.png"],
     counteries: ["us"],
   },
   {
@@ -587,6 +595,7 @@ export const EVENTS: TimelineEvent[] = [
     title: "Dunkirk",
     startDate: { year: 2017 },
     tags: ["art:movie:director:nolan"],
+    images: ["/images/nolan-dunkirk.png"],
     counteries: ["us"],
   },
   {
@@ -594,6 +603,7 @@ export const EVENTS: TimelineEvent[] = [
     title: "Tenet",
     startDate: { year: 2020 },
     tags: ["art:movie:director:nolan"],
+    images: ["/images/nolan-tenet.png"],
     counteries: ["us"],
   },
   {
@@ -601,6 +611,7 @@ export const EVENTS: TimelineEvent[] = [
     title: "Oppenheimer",
     startDate: { year: 2023 },
     tags: ["art:movie:director:nolan"],
+    images: ["/images/nolan-oppenheimer.png"],
     counteries: ["us"],
   },
   {
