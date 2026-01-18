@@ -104,13 +104,19 @@ export function TimelineProvider({ children }: { children: React.ReactNode }) {
 
   const visibleEvents = useMemo(
     () =>
-      events.filter(
-        e =>
-          !e.tags ||
-          activeTags.some(tagId => e.tags?.includes(tagId)) ||
-          activeTags.some(tagId => e.tags?.some(t => t.startsWith(tagId)))
-      ),
-    [events, activeTags]
+      events
+        .filter(
+          e =>
+            !e.tags ||
+            activeTags.some(tagId => e.tags?.includes(tagId)) ||
+            activeTags.some(tagId => e.tags?.some(t => t.startsWith(tagId)))
+        )
+        .filter(
+          e =>
+            selectedCountries.length === 0 ||
+            e.counteries?.some(c => selectedCountries.includes(c))
+        ),
+    [events, activeTags, selectedCountries]
   )
 
   const toPercent = useCallback(

@@ -15,6 +15,7 @@ import { WORLD_MAX, WORLD_MIN } from "@/constants/world"
 import { getFormattedYear } from "@/lib/time"
 import { TAGS } from "@/constants/tags"
 import { KeyboardKey } from "./keyboardKey"
+import { getEventsCountries } from "@/lib/events"
 
 type SearchResultType = "event" | "tag" | "country"
 
@@ -102,8 +103,13 @@ function SearchResultItem({
 }
 
 export function GlobalSearch({ className }: { className?: string }) {
-  const { setActiveTags, setViewStart, setViewEnd, getTagEvents } =
-    useTimeline()
+  const {
+    setActiveTags,
+    setViewStart,
+    setViewEnd,
+    getTagEvents,
+    setSelectedCountries,
+  } = useTimeline()
 
   const [isOpen, setIsOpen] = useState(true)
   const [searchKey, setSearchKey] = useState("")
@@ -199,9 +205,8 @@ export function GlobalSearch({ className }: { className?: string }) {
       const latestEventYear =
         latestEvent?.endDate?.year ?? latestEvent?.startDate.year
 
-      console.log("tag events", events)
-      console.log("earliest event", earliestEventYear)
-      console.log("latest event", latestEventYear)
+      const countries = getEventsCountries(events)
+      setSelectedCountries(countries)
 
       if (earliestEventYear && latestEventYear) {
         setViewStart(Math.max(WORLD_MIN, earliestEventYear - 1))
@@ -210,7 +215,7 @@ export function GlobalSearch({ className }: { className?: string }) {
 
       setSearchKey("")
     },
-    []
+    [setSelectedCountries]
   )
 
   const clearSearch = useCallback(() => {
