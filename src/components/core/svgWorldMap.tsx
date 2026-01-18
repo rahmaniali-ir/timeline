@@ -1,25 +1,27 @@
 import { cn } from "@/lib/utils"
-import { forwardRef } from "react"
+import { forwardRef, type ReactNode } from "react"
 
-export const SVGWorldMap = forwardRef<SVGSVGElement, { className?: string }>(
-  ({ className }, ref) => (
-    <svg
-      ref={ref}
-      version='1.1'
-      xmlns='http://www.w3.org/2000/svg'
-      viewBox='30.767 241.591 784.077 458.627'
-      className={cn(
-        "size-full fill-current",
-        "[&>g]:transition-colors [&>g]:duration-500 [&>g:hover]:fill-neutral-300",
-        "[&>path]:transition-colors [&>path]:duration-500 [&>path:hover]:fill-neutral-300",
-        className
-      )}
-    >
-      <desc>
-        Author: Al MacDonald Editor: Fritz Lekschas License: CC BY-SA 3.0 ID:
-        ISO 3166-1 or "_[a-zA-Z]" if an ISO code is not available
-      </desc>
+export const SVGWorldMap = forwardRef<
+  SVGGElement,
+  { className?: string; children?: ReactNode }
+>(({ className, children }, ref) => (
+  <svg
+    version='1.1'
+    xmlns='http://www.w3.org/2000/svg'
+    viewBox='30.767 241.591 784.077 458.627'
+    className={cn(
+      "size-full fill-current",
+      "[&>g:first-of-type>g]:transition-colors [&>g:first-of-type>g]:duration-500 [&>g:first-of-type>g:hover]:fill-neutral-300",
+      "[&>g:first-of-type>path]:transition-colors [&>g:first-of-type>path]:duration-500 [&>g:first-of-type>path:hover]:fill-neutral-300",
+      className
+    )}
+  >
+    <desc>
+      Author: Al MacDonald Editor: Fritz Lekschas License: CC BY-SA 3.0 ID: ISO
+      3166-1 or "_[a-zA-Z]" if an ISO code is not available
+    </desc>
 
+    <g ref={ref}>
       <path
         id='_somaliland'
         d='M512.674,502.797l3.526,2.403l1.046-0.052l8.757-3.008l0.994,3.206l-0.701,2.706l-1.893,1.503l-4.729-0.302l-6.769-4.158L512.674,502.797L512.674,502.797z'
@@ -900,6 +902,8 @@ export const SVGWorldMap = forwardRef<SVGSVGElement, { className?: string }>(
         id='zw'
         d='M468.52,578.226l7.755,8.757l5.946,1.513l3.984-6.248l-0.312-8.281l-6.465-3.337l-2.431,1.098l-3.62,5.524l-5.014-0.053L468.52,578.226L468.52,578.226z'
       />
-    </svg>
-  )
-)
+    </g>
+
+    {children}
+  </svg>
+))

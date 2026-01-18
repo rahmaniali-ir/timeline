@@ -21,6 +21,9 @@ interface TimelineContextType {
   tags: EventTag[]
   activeTags: string[]
   hoveredCountries: string[]
+  selectedCountries: string[]
+  hoveredEvents: TimelineEvent[]
+  selectedEvents: TimelineEvent[]
   setViewStart: (year: number) => void
   setViewEnd: (year: number) => void
   toPercent: (year: number) => number
@@ -33,6 +36,13 @@ interface TimelineContextType {
   startCountryHovering: (country: string) => void
   endCountryHovering: (country: string) => void
   getTagEvents: (tagId: string) => TimelineEvent[]
+  setSelectedCountries: (counteries: string[]) => void
+  isCountrySelected: (countryId: string) => boolean
+  selectCountry: (countryId: string) => void
+  deselectCountry: (countryId: string) => void
+  toggleCountrySelection: (countryId: string) => void
+  setHoveredEvents: (events: TimelineEvent[]) => void
+  setSelectedEvents: (events: TimelineEvent[]) => void
 }
 
 const TimelineContext = createContext<TimelineContextType>({
@@ -44,6 +54,9 @@ const TimelineContext = createContext<TimelineContextType>({
   tags: [],
   activeTags: [],
   hoveredCountries: [],
+  selectedCountries: [],
+  hoveredEvents: [],
+  selectedEvents: [],
   setViewStart: (_: number) => {},
   setViewEnd: (_: number) => {},
   toPercent: (_: number) => 0,
@@ -56,6 +69,13 @@ const TimelineContext = createContext<TimelineContextType>({
   startCountryHovering: (_: string) => {},
   endCountryHovering: (_: string) => {},
   getTagEvents: (_: string) => [],
+  setSelectedCountries: (_: string[]) => {},
+  isCountrySelected: (_: string) => false,
+  selectCountry: (_: string) => {},
+  deselectCountry: (_: string) => {},
+  toggleCountrySelection: (_: string) => {},
+  setHoveredEvents: (_: TimelineEvent[]) => {},
+  setSelectedEvents: (_: TimelineEvent[]) => {},
 })
 
 export function TimelineProvider({ children }: { children: React.ReactNode }) {
@@ -65,11 +85,14 @@ export function TimelineProvider({ children }: { children: React.ReactNode }) {
   const [viewEnd, setViewEnd] = useState(WORLD_MAX)
 
   const [events, setEvents] = useState<TimelineEvent[]>(EVENTS)
+  const [hoveredEvents, setHoveredEvents] = useState<TimelineEvent[]>([])
+  const [selectedEvents, setSelectedEvents] = useState<TimelineEvent[]>([])
 
   const [tags, setTags] = useState<EventTag[]>(TAGS)
   const [activeTags, setActiveTags] = useState<string[]>(["art"])
 
   const [hoveredCountries, setHoveredCounteries] = useState<string[]>([])
+  const [selectedCountries, setSelectedCountries] = useState<string[]>([])
 
   const range = useMemo(() => viewEnd - viewStart, [viewEnd, viewStart])
 
@@ -155,6 +178,33 @@ export function TimelineProvider({ children }: { children: React.ReactNode }) {
     []
   )
 
+  const isCountrySelected = useCallback(
+    (id: string) => selectedCountries.includes(id),
+    [selectedCountries]
+  )
+
+  const selectCountry = useCallback(
+    (id: string) =>
+      setSelectedCountries(countries =>
+        isCountrySelected(id) ? countries : [...countries, id]
+      ),
+    [isCountrySelected]
+  )
+
+  const deselectCountry = useCallback(
+    (id: string) =>
+      setSelectedCountries(countries => countries.filter(c => c !== id)),
+    [isCountrySelected]
+  )
+
+  const toggleCountrySelection = useCallback(
+    (id: string) => {
+      if (isCountrySelected(id)) deselectCountry(id)
+      else selectCountry(id)
+    },
+    [isCountrySelected, selectCountry, deselectCountry]
+  )
+
   useEffect(() => {
     const paramTagsString = params["tags"] || undefined
     const paramTags = paramTagsString?.split(",") ?? []
@@ -175,6 +225,9 @@ export function TimelineProvider({ children }: { children: React.ReactNode }) {
         tags,
         activeTags,
         hoveredCountries,
+        selectedCountries,
+        hoveredEvents,
+        selectedEvents,
         setViewStart: changeViewStart,
         setViewEnd,
         toPercent,
@@ -187,6 +240,13 @@ export function TimelineProvider({ children }: { children: React.ReactNode }) {
         startCountryHovering,
         endCountryHovering,
         getTagEvents,
+        setSelectedCountries,
+        isCountrySelected,
+        selectCountry,
+        deselectCountry,
+        toggleCountrySelection,
+        setHoveredEvents,
+        setSelectedEvents,
       }}
     >
       {children}

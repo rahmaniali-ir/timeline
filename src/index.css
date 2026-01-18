@@ -95,10 +95,21 @@ body {
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
+  --animate-fade-in: fade-in 0.3s ease;
   --animate-appear: appear 0.3s ease;
   --animate-pop: pop 0.3s ease;
   --animate-pop-out: pop-out 1s ease forwards;
   --animate-scale-y: scale-y 0.3s ease;
+
+  @keyframes fade-in {
+    0% {
+      opacity: 0;
+    }
+
+    100% {
+      opacity: 1;
+    }
+  }
 
   @keyframes appear {
     0% {
