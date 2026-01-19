@@ -44,7 +44,7 @@ export function MapOptions() {
 
   return (
     <OptionsGroup name='Map' icon={MapIcon}>
-      <label className='sticky top-0 flex items-center gap-1 px-1.5 bg-neutral-300/50 backdrop-blur-sm rounded-md z-10'>
+      <label className='sticky top-0 flex items-center gap-1 px-1.5 bg-neutral-300/50 backdrop-blur-sm rounded-md z-20'>
         <SearchIcon className='size-3 text-neutral-500' />
 
         <input

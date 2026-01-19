@@ -10,7 +10,7 @@ import { useState } from "react"
 import { MapOptions } from "../tools/mapOpations"
 import { Button } from "../ui/button"
 import { OptionsGroup } from "./optionsGroup"
-import { TagsOptions } from "./tagOptions"
+import { TagsOptions } from "../tools/tagOptions"
 
 export function TimelineOptions({ className }: { className?: string }) {
   const [isOpen, setIsOpen] = useState(true)

@@ -1,8 +1,8 @@
 import { useTimeline } from "@/contexts/timeline"
 import type { ListItem } from "@/types/list"
 import { SearchIcon, TagsIcon } from "lucide-react"
-import { NestedList } from "./nestedList"
-import { OptionsGroup } from "./optionsGroup"
+import { NestedList } from "../core/nestedList"
+import { OptionsGroup } from "../core/optionsGroup"
 import { useCallback, useMemo, useState, type FormEventHandler } from "react"
 
 export function TagsOptions() {
@@ -33,7 +33,7 @@ export function TagsOptions() {
 
   return (
     <OptionsGroup name='Tags' icon={TagsIcon} badge={activeTags.length}>
-      <label className='sticky top-0 flex items-center gap-1 px-1.5 bg-neutral-300/50 backdrop-blur-sm rounded-md z-10'>
+      <label className='sticky top-0 flex items-center gap-1 px-1.5 bg-neutral-300/50 backdrop-blur-sm rounded-md z-20'>
         <SearchIcon className='size-3 text-neutral-500' />
 
         <input

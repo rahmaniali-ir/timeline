@@ -154,7 +154,7 @@ export function NestedItem({
       {isOpen && hasChildren && (
         <div
           className={cn(
-            "relative flex flex-col gap-0.5 mt-0.5 p-0.5 ps-4 pe-0 mb-1 z-20",
+            "relative flex flex-col gap-0.5 mt-0.5 p-0.5 ps-4 pe-0 mb-1 z-10",
             "before:absolute before:h-full before:w-px before:bg-neutral-400/50 before:left-2.5 before:top-0"
           )}
         >

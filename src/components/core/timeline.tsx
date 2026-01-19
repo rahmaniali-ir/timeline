@@ -4,7 +4,6 @@ import { cn } from "@/lib/utils"
 import type { PositionedEvent } from "@/types/event"
 import { useMemo, useRef } from "react"
 import { EventElement } from "./eventElement"
-import { WorldMap } from "./worldMap"
 
 function Timeline({
   className,
@@ -125,12 +124,10 @@ function Timeline({
   return (
     <div
       className={cn(
-        "flex-1 relative flex items-end mask-x overflow-hidden",
+        "relative flex items-end mask-x overflow-hidden",
         className
       )}
     >
-      <WorldMap className='absolute inset-0 p-16 text-neutral-200' />
-
       <div
         ref={containerRef}
         onWheel={onWheel}

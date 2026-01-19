@@ -260,7 +260,7 @@ const events: TimelineEvent[] = [
       "history:religion:islam",
     ],
     images: ["/images/iran-iraq-war.jpg"],
-    counteries: ["ir"],
+    counteries: ["ir", "iq"],
   },
   {
     id: "iran-crime-1388",
