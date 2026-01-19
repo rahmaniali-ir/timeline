@@ -8,7 +8,6 @@ export const EVENTS: TimelineEvent[] = [
     id: "year0",
     title: "Year Zero",
     startDate: { year: 0 },
-    description: "Rise of the Achaemenid Empire under Cyrus the Great",
     links: {
       Wikipedia: "https://en.wikipedia.org/wiki/Year_zero",
     },

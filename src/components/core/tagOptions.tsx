@@ -1,64 +1,54 @@
 import { useTimeline } from "@/contexts/timeline"
-import { useState } from "react"
-import { Button } from "../ui/button"
-import { ChevronDownIcon, TagsIcon } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { TagToggle } from "./tagToggle"
+import type { ListItem } from "@/types/list"
+import { SearchIcon, TagsIcon } from "lucide-react"
+import { NestedList } from "./nestedList"
+import { OptionsGroup } from "./optionsGroup"
+import { useCallback, useMemo, useState, type FormEventHandler } from "react"
 
 export function TagsOptions() {
-  const { tags, activeTags } = useTimeline()
+  const { tags, activeTags, toggleTag } = useTimeline()
 
-  const [isOpen, setIsOpen] = useState(false)
+  const [searchKey, setSearchKey] = useState("")
 
-  const topLevelTags = tags.filter(t => t.id.match(/:/g) === null)
+  const tagsList: ListItem[] = useMemo(
+    () =>
+      tags.map(tag => ({
+        id: tag.id,
+        name: tag.name,
+        icon: tag.icon,
+        color: tag.color,
+        className: tag.className,
+      })),
+    [tags, searchKey]
+  )
 
-  const toggleOpen = () => {
-    setIsOpen(open => !open)
-  }
+  const handleSearchInput: FormEventHandler<HTMLInputElement> = useCallback(
+    e => {
+      const target = e.target as HTMLInputElement
+
+      setSearchKey(target.value)
+    },
+    []
+  )
 
   return (
-    <div className='relative flex flex-col gap-2 p-1 bg-neutral-200 rounded-lg border-2 border-neutral-100/50 min-w-[250px]'>
-      <Button
-        onClick={toggleOpen}
-        variant='ghost'
-        size='sm'
-        className='group/tags-option-toggle h-auto! justify-start py-1 gap-2'
-      >
-        <div className='relative'>
-          <TagsIcon className='size-3 text-neutral-400' />
+    <OptionsGroup name='Tags' icon={TagsIcon} badge={activeTags.length}>
+      <label className='sticky top-0 flex items-center gap-1 px-1.5 bg-neutral-300/50 backdrop-blur-sm rounded-md z-10'>
+        <SearchIcon className='size-3 text-neutral-500' />
 
-          {/* active tags count badge */}
-          <div
-            className={cn(
-              "absolute py-0.5 px-1 left-full top-full -translate-x-1/3 -translate-y-1/2",
-              "text-[8px] bg-neutral-400 text-neutral-100 leading-none rounded-full",
-              "transition-all duration-300",
-              "opacity-0 scale-75",
-              "group-hover/tags-option-toggle:-translate-y-2/3",
-              activeTags.length > 0 && "opacity-100 scale-100"
-            )}
-          >
-            {activeTags.length}
-          </div>
-        </div>
-
-        <strong className='text-xs font-semibold text-neutral-600'>Tags</strong>
-
-        <ChevronDownIcon
-          className={cn(
-            "size-3 text-neutral-400 ms-auto transition-all duration-300",
-            isOpen && "rotate-x-150"
-          )}
+        <input
+          value={searchKey}
+          onInput={handleSearchInput}
+          placeholder='Search'
+          className='py-1 outline-none text-xs'
         />
-      </Button>
+      </label>
 
-      {isOpen && (
-        <div className='relative flex flex-col gap-1 px-1 pb-0.5 overflow-y-auto max-h-[50vh] rounded-md'>
-          {topLevelTags.map(tag => (
-            <TagToggle key={tag.id} tag={tag} />
-          ))}
-        </div>
-      )}
-    </div>
+      <NestedList
+        list={tagsList}
+        selectedItems={activeTags}
+        onSelect={id => toggleTag(id)}
+      />
+    </OptionsGroup>
   )
 }

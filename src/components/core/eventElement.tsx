@@ -119,7 +119,7 @@ export function EventElement({ event, left, width }: PositionedEvent) {
         <div
           className={cn(
             "size-8 absolute left-1/2 bottom-[calc(100%+16px)] -translate-x-1/2 bg-neutral-300 rounded-full isolate",
-            "animate-pop transition-all duration-300 group-hover/event:size-12 group-hover/event:bottom-[calc(100%+24px)]",
+            "animate-pop-in transition-all duration-300 group-hover/event:size-12 group-hover/event:bottom-[calc(100%+24px)]",
             "before:absolute before:left-1/2 before:-translate-x-1/2 before:top-full before:h-5 before:w-0.5 before:bg-neutral-300 before:-z-10"
           )}
         >

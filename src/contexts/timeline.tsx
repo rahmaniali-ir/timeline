@@ -36,6 +36,7 @@ interface TimelineContextType {
   startCountryHovering: (country: string) => void
   endCountryHovering: (country: string) => void
   getTagEvents: (tagId: string) => TimelineEvent[]
+  setHoveredCountries: (counteries: string[]) => void
   setSelectedCountries: (counteries: string[]) => void
   isCountrySelected: (countryId: string) => boolean
   selectCountry: (countryId: string) => void
@@ -69,6 +70,7 @@ const TimelineContext = createContext<TimelineContextType>({
   startCountryHovering: (_: string) => {},
   endCountryHovering: (_: string) => {},
   getTagEvents: (_: string) => [],
+  setHoveredCountries: (_: string[]) => {},
   setSelectedCountries: (_: string[]) => {},
   isCountrySelected: (_: string) => false,
   selectCountry: (_: string) => {},
@@ -91,7 +93,7 @@ export function TimelineProvider({ children }: { children: React.ReactNode }) {
   const [tags, setTags] = useState<EventTag[]>(TAGS)
   const [activeTags, setActiveTags] = useState<string[]>(["art"])
 
-  const [hoveredCountries, setHoveredCounteries] = useState<string[]>([])
+  const [hoveredCountries, setHoveredCountries] = useState<string[]>([])
   const [selectedCountries, setSelectedCountries] = useState<string[]>([])
 
   const range = useMemo(() => viewEnd - viewStart, [viewEnd, viewStart])
@@ -113,8 +115,9 @@ export function TimelineProvider({ children }: { children: React.ReactNode }) {
         )
         .filter(
           e =>
+            !e.counteries ||
             selectedCountries.length === 0 ||
-            e.counteries?.some(c => selectedCountries.includes(c))
+            e.counteries.some(c => selectedCountries.includes(c))
         ),
     [events, activeTags, selectedCountries]
   )
@@ -168,13 +171,19 @@ export function TimelineProvider({ children }: { children: React.ReactNode }) {
     [activeTags]
   )
 
-  const startCountryHovering = useCallback((country: string) => {
-    setHoveredCounteries(countries => [...countries, country])
-  }, [])
+  const startCountryHovering = useCallback(
+    (country: string) => {
+      setHoveredCountries(countries => [...countries, country])
+    },
+    [setHoveredCountries]
+  )
 
-  const endCountryHovering = useCallback((country: string) => {
-    setHoveredCounteries(countries => countries.filter(c => c !== country))
-  }, [])
+  const endCountryHovering = useCallback(
+    (country: string) => {
+      setHoveredCountries(countries => countries.filter(c => c !== country))
+    },
+    [setHoveredCountries]
+  )
 
   const getTagEvents = useCallback(
     (tagId: string) =>
@@ -246,6 +255,7 @@ export function TimelineProvider({ children }: { children: React.ReactNode }) {
         startCountryHovering,
         endCountryHovering,
         getTagEvents,
+        setHoveredCountries,
         setSelectedCountries,
         isCountrySelected,
         selectCountry,

@@ -8,7 +8,7 @@ const events: TimelineEvent[] = [
     endDate: { year: 1291 },
     tags: ["history:war:crusades", "history:religion:christianity"],
     counteries: ["il"],
-    images: ["images/cruseds.png"],
+    images: ["images/crusades.jpg"],
   },
 ]
 

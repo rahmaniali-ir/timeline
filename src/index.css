@@ -98,6 +98,7 @@ body {
   --animate-fade-in: fade-in 0.3s ease;
   --animate-appear: appear 0.3s ease;
   --animate-pop: pop 0.3s ease;
+  --animate-pop-in: pop-in 0.3s ease;
   --animate-pop-out: pop-out 1s ease forwards;
   --animate-scale-y: scale-y 0.3s ease;
 
@@ -124,6 +125,20 @@ body {
   }
 
   @keyframes pop {
+    0% {
+      scale: 0.6;
+    }
+
+    75% {
+      scale: 1.1;
+    }
+
+    100% {
+      scale: 1;
+    }
+  }
+
+  @keyframes pop-in {
     0% {
       opacity: 0;
       scale: 0.6;

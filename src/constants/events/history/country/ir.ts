@@ -6,7 +6,7 @@ const events: TimelineEvent[] = [
     title: "Elamite Kingdom",
     startDate: { year: -3200 },
     endDate: { year: -539 },
-    tags: ["history:country:iran"],
+    tags: ["history:country:ir"],
     description:
       "One of the earliest civilizations in Iran, centered in southwestern Iran with Susa as a major city.",
     links: {
@@ -22,7 +22,7 @@ const events: TimelineEvent[] = [
     title: "Median Empire",
     startDate: { year: -678 },
     endDate: { year: -550 },
-    tags: ["history:country:iran"],
+    tags: ["history:country:ir"],
     description:
       "An Iranian empire that unified the Medes and played a crucial role in the fall of Assyria.",
     links: {
@@ -38,7 +38,7 @@ const events: TimelineEvent[] = [
     id: "iran",
     title: "Formation of Iran",
     startDate: { year: -550 },
-    tags: ["history:country:iran"],
+    tags: ["history:country:ir"],
     description: "Rise of the Achaemenid Empire under Cyrus the Great",
     counteries: ["ir"],
   },
@@ -47,7 +47,7 @@ const events: TimelineEvent[] = [
     title: "Achaemenid Empire",
     startDate: { year: -550 },
     endDate: { year: -330 },
-    tags: ["history:country:iran"],
+    tags: ["history:country:ir"],
     description:
       "Founded by Cyrus the Great, it became the largest empire of the ancient world.",
     links: {
@@ -63,7 +63,7 @@ const events: TimelineEvent[] = [
     title: "Seleucid Empire",
     startDate: { year: -312 },
     endDate: { year: -63 },
-    tags: ["history:country:iran"],
+    tags: ["history:country:ir"],
     description:
       "A Hellenistic empire that ruled Iran after Alexander the Great.",
     links: {
@@ -79,7 +79,7 @@ const events: TimelineEvent[] = [
     title: "Parthian Empire",
     startDate: { year: -247 },
     endDate: { year: 224 },
-    tags: ["history:country:iran"],
+    tags: ["history:country:ir"],
     description:
       "An Iranian empire known for its feudal system and wars with Rome.",
     links: {
@@ -95,20 +95,21 @@ const events: TimelineEvent[] = [
     title: "Sassanid Empire",
     startDate: { year: 224 },
     endDate: { year: 651 },
-    tags: ["history:country:iran"],
+    tags: ["history:country:ir"],
     description:
       "The last pre-Islamic Persian empire, a major rival of the Byzantine Empire.",
     links: {
       Wikipedia: "https://en.wikipedia.org/wiki/Sasanian_Empire",
     },
     images: ["https://flags.paxhistoria.co/sassanid_empire-224-651.png"],
+    counteries: ["ir"],
   },
   {
     id: "rashidunCaliphateIran",
     title: "Rashidun Caliphate (Iran)",
     startDate: { year: 651 },
     endDate: { year: 661 },
-    tags: ["history:country:iran", "history:religion:islam"],
+    tags: ["history:country:ir", "history:religion:islam"],
     description:
       "The first Islamic rule over Iran following the fall of the Sassanids.",
     links: {
@@ -124,7 +125,7 @@ const events: TimelineEvent[] = [
     title: "Umayyad Caliphate (Iran)",
     startDate: { year: 661 },
     endDate: { year: 750 },
-    tags: ["history:country:iran", "history:religion:islam"],
+    tags: ["history:country:ir", "history:religion:islam"],
     description:
       "Arab caliphate that governed Iran as part of a vast Islamic empire.",
     links: {
@@ -140,7 +141,7 @@ const events: TimelineEvent[] = [
     title: "Abbasid Caliphate (Iran)",
     startDate: { year: 750 },
     endDate: { year: 1258 },
-    tags: ["history:country:iran", "history:religion:islam"],
+    tags: ["history:country:ir", "history:religion:islam"],
     description:
       "Persian-influenced Islamic caliphate with Baghdad as its center.",
     links: {
@@ -156,7 +157,7 @@ const events: TimelineEvent[] = [
     title: "Safavid Empire",
     startDate: { year: 1501 },
     endDate: { year: 1736 },
-    tags: ["history:country:iran", "history:religion:islam"],
+    tags: ["history:country:ir", "history:religion:islam"],
     description:
       "Established Twelver Shia Islam as the state religion of Iran.",
     links: {
@@ -172,7 +173,7 @@ const events: TimelineEvent[] = [
     title: "Afsharid Dynasty",
     startDate: { year: 1736 },
     endDate: { year: 1796 },
-    tags: ["history:country:iran"],
+    tags: ["history:country:ir"],
     description:
       "Founded by Nader Shah, known for military expansion and campaigns.",
     links: {
@@ -188,7 +189,7 @@ const events: TimelineEvent[] = [
     title: "Zand Dynasty",
     startDate: { year: 1751 },
     endDate: { year: 1794 },
-    tags: ["history:country:iran"],
+    tags: ["history:country:ir"],
     description: "A relatively peaceful Iranian dynasty centered in Shiraz.",
     links: {
       Wikipedia: "https://en.wikipedia.org/wiki/Zand_dynasty",
@@ -201,7 +202,7 @@ const events: TimelineEvent[] = [
     title: "Qajar Dynasty",
     startDate: { year: 1794 },
     endDate: { year: 1925 },
-    tags: ["history:country:iran"],
+    tags: ["history:country:ir"],
     description:
       "A period marked by territorial losses and early modernization efforts.",
     links: {
@@ -218,8 +219,8 @@ const events: TimelineEvent[] = [
     startDate: { year: 1925 },
     endDate: { year: 1979 },
     tags: [
-      "history:country:iran",
-      "history:country:iran:government:pahlavi-dynesty",
+      "history:country:ir",
+      "history:country:ir:government:pahlavi-dynesty",
     ],
     description:
       "Modernizing monarchy that ruled Iran before the Islamic Revolution.",
@@ -236,7 +237,7 @@ const events: TimelineEvent[] = [
     title: "Islamic Republic of Iran",
     startDate: { year: 1979 },
     endDate: { year: 2026 },
-    tags: ["history:country:iran", "history:religion:islam"],
+    tags: ["history:country:ir", "history:religion:islam"],
     description:
       "Current government of Iran established after the 1979 Islamic Revolution.",
     links: {
@@ -253,9 +254,9 @@ const events: TimelineEvent[] = [
     startDate: { year: 1979 },
     endDate: { year: 1987 },
     tags: [
-      "history:country:iran",
+      "history:country:ir",
       "history:war:iran-iraq",
-      "history:country:iran:government:islamic-republic",
+      "history:country:ir:government:islamic-republic",
       "history:religion:islam",
     ],
     images: ["/images/iran-iraq-war.jpg"],
@@ -265,21 +266,21 @@ const events: TimelineEvent[] = [
     id: "iran-crime-1388",
     title: "Suppression of the Green Revolution",
     startDate: { year: 2010 },
-    tags: ["history:country:iran:government:islamic-republic:crime"],
+    tags: ["history:country:ir:government:islamic-republic:crime"],
     counteries: ["ir"],
   },
   {
     id: "iran-crime-1401",
     title: "Killing of Mahsa Amini",
     startDate: { year: 2023 },
-    tags: ["history:country:iran:government:islamic-republic:crime"],
+    tags: ["history:country:ir:government:islamic-republic:crime"],
     counteries: ["ir"],
   },
   {
     id: "iran-crime-1404",
     title: "Suppression of peacful protstors",
     startDate: { year: 2026 },
-    tags: ["history:country:iran:government:islamic-republic:crime"],
+    tags: ["history:country:ir:government:islamic-republic:crime"],
     counteries: ["ir"],
   },
 ]

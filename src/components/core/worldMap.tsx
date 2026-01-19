@@ -1,8 +1,8 @@
+import { COUNTRIES } from "@/constants/countries"
 import { useTimeline } from "@/contexts/timeline"
 import { cn } from "@/lib/utils"
 import { useCallback, useEffect, useMemo, useRef } from "react"
 import { SVGWorldMap } from "./svgWorldMap"
-import { countryNames } from "@/constants/countryNames"
 
 type CountryLabelSize = "xs" | "sm" | "md" | "lg" | "xl"
 
@@ -28,6 +28,7 @@ function getElementSize(element: SVGElement | HTMLElement): CountryLabelSize {
 }
 
 function MapBoundary({
+  id,
   name,
   bounding,
   size,
@@ -45,12 +46,12 @@ function MapBoundary({
         height: bounding.height + "px",
         width: bounding.width + "px",
       }}
-      className={cn("fixed pointer-events-none")}
+      className={cn("fixed pointer-events-none animate-fade-in")}
     >
       <div className='absolute left-1/2 top-1/2 -translate-1/2 text-nowrap'>
         <div
           className={cn(
-            "font-semibold transition-all",
+            "flex flex-col items-center gap-1 font-semibold transition-all",
             size === "xs" && "text-xs",
             size === "sm" && "text-sm",
             size === "md" && "text-base",
@@ -65,7 +66,16 @@ function MapBoundary({
             letterSpacing: size === "xl" ? "0.5ch" : undefined,
           }}
         >
-          {name}
+          <img
+            src={"/images/flags/" + id + ".jpg"}
+            alt={name}
+            className={cn(
+              "size-[1em] rounded-full object-cover",
+              selected && "animate-pop"
+            )}
+          />
+
+          <span>{name}</span>
         </div>
       </div>
     </div>
@@ -120,10 +130,10 @@ export function WorldMap({ className }: { className?: string }) {
   const countriesBoundaries = useMemo<CountryBoundry[]>(
     () =>
       getCountryElements(visibleCountries)
-        .filter(e => e.id in countryNames)
+        .filter(e => e.id in COUNTRIES)
         .map(element => {
           const id = element.id
-          const name = countryNames[id]
+          const name = COUNTRIES[id].name
 
           return {
             id,
@@ -210,7 +220,7 @@ export function WorldMap({ className }: { className?: string }) {
       <SVGWorldMap ref={svgRef} className='text-neutral-200' />
 
       {countriesBoundaries.map((boundary, index) => (
-        <MapBoundary key={boundary.id + "-" + index} {...boundary} />
+        <MapBoundary key={boundary.id} {...boundary} />
       ))}
     </div>
   )
