@@ -1,25 +1,32 @@
 import { EVENTS } from "@/constants/events"
+import { TAGS } from "@/constants/tags"
+import { WORLD_MAX, WORLD_MIN } from "@/constants/world"
+import { useTimeline } from "@/contexts/timeline"
+import { getEventsCountries } from "@/lib/events"
+import { getClenSearchKey } from "@/lib/strings"
+import { getFormattedYear } from "@/lib/time"
 import { cn } from "@/lib/utils"
+import type { EventTag, TimelineEvent, TimePoint } from "@/types/event"
 import {
+  BookIcon,
   CalendarIcon,
   DeleteIcon,
+  FileSearchIcon,
+  HistoryIcon,
+  MapIcon,
   SearchIcon,
   TagIcon,
-  XIcon,
+  UserIcon,
 } from "lucide-react"
 import { useCallback, useMemo, useState, type FormEventHandler } from "react"
 import { Button } from "../ui/button"
-import type { EventTag, TimelineEvent, TimePoint } from "@/types/event"
-import { useTimeline } from "@/contexts/timeline"
-import { WORLD_MAX, WORLD_MIN } from "@/constants/world"
-import { getFormattedYear } from "@/lib/time"
-import { TAGS } from "@/constants/tags"
+import { Expandable } from "./expandable"
 import { KeyboardKey } from "./keyboardKey"
-import { getEventsCountries } from "@/lib/events"
 
 type SearchResultType = "event" | "tag" | "country"
 
 interface SearchResult<T = unknown> {
+  id: string
   type: SearchResultType
   title: string
   start?: TimePoint
@@ -102,16 +109,72 @@ function SearchResultItem({
   )
 }
 
+function SearchInput({
+  searchKey,
+  setSearchKey,
+  onClear,
+  onFocus,
+}: {
+  searchKey: string
+  setSearchKey: (s: string) => void
+  onClear?: () => void
+  onFocus?: () => void
+}) {
+  const cleanSearchKey = useMemo(() => getClenSearchKey(searchKey), [searchKey])
+
+  const handleOnInput: FormEventHandler<HTMLInputElement> = useCallback(e => {
+    const target = e.target as HTMLInputElement
+    setSearchKey?.(target.value)
+  }, [])
+
+  const [isFocused, setIsFocused] = useState(true)
+
+  return (
+    <label className='group/search-input flex items-center gap-1 bg-neutral-200 rounded px-2 rounded-full w-full transition-all'>
+      <SearchIcon className='size-4 text-neutral-500' />
+
+      <input
+        type='text'
+        placeholder='Search'
+        className='outline-none text-center flex-1'
+        value={searchKey}
+        onInput={handleOnInput}
+        onFocus={() => {
+          setIsFocused(true)
+          onFocus?.()
+        }}
+        onBlur={() => setIsFocused(false)}
+      />
+
+      <DeleteIcon
+        onClick={() => onClear?.()}
+        className={cn(
+          "size-3 text-neutral-500 opacity-0 transition-opacity hover:text-neutral-700 hover:scale-105",
+          cleanSearchKey.length === 0 && "pointer-events-none",
+          cleanSearchKey.length > 0 && isFocused && "opacity-100"
+        )}
+      />
+
+      <div className='absolute flex items-center gap-2 top-1/2 right-2 -translate-y-1/2 text-[10px] pointer-events-none transition-opacity group-focus-within/search-input:opacity-0'>
+        <KeyboardKey>Ctrl</KeyboardKey>
+        <span className='font-mono'>+</span>
+
+        <KeyboardKey>K</KeyboardKey>
+      </div>
+    </label>
+  )
+}
+
 export function GlobalSearch({ className }: { className?: string }) {
   const {
     setActiveTags,
     setViewStart,
     setViewEnd,
     getTagEvents,
-    setSelectedCountries,
+    setHoveredCountries,
   } = useTimeline()
 
-  const [isOpen, setIsOpen] = useState(true)
+  const [isOpen, setIsOpen] = useState(false)
   const [searchKey, setSearchKey] = useState("")
   const [searchHistory, setSearchHistory] = useState<SearchResult[]>([])
 
@@ -127,6 +190,7 @@ export function GlobalSearch({ className }: { className?: string }) {
       .slice(0, 5)
       .map(e => ({
         type: "event",
+        id: "event-" + e.id,
         title: e.title,
         start: e.startDate,
         end: e.endDate,
@@ -150,6 +214,7 @@ export function GlobalSearch({ className }: { className?: string }) {
 
         return {
           type: "tag",
+          id: "tag-" + tag.id,
           title: tag.name,
           start,
           end,
@@ -166,12 +231,10 @@ export function GlobalSearch({ className }: { className?: string }) {
     [cleanSearchKey, searchResults]
   )
 
-  const handleSearchInput: FormEventHandler<HTMLInputElement> = useCallback(
-    e => {
-      const target = e.target as HTMLInputElement
-      setSearchKey(target.value)
-    },
-    []
+  const recentSearchs = useMemo(
+    () =>
+      searchHistory.filter(h => h.title.toLowerCase().includes(cleanSearchKey)),
+    [searchHistory, cleanSearchKey]
   )
 
   const handleSelectEvent = useCallback(
@@ -196,8 +259,6 @@ export function GlobalSearch({ className }: { className?: string }) {
 
       setActiveTags([tag.id])
 
-      console.log("activate tag", tag)
-
       const events = getTagEvents(tag.id)
       const earliestEventYear = events.at(0)?.startDate.year
 
@@ -206,7 +267,7 @@ export function GlobalSearch({ className }: { className?: string }) {
         latestEvent?.endDate?.year ?? latestEvent?.startDate.year
 
       const countries = getEventsCountries(events)
-      setSelectedCountries(countries)
+      setHoveredCountries(countries)
 
       if (earliestEventYear && latestEventYear) {
         setViewStart(Math.max(WORLD_MIN, earliestEventYear - 1))
@@ -215,88 +276,118 @@ export function GlobalSearch({ className }: { className?: string }) {
 
       setSearchKey("")
     },
-    [setSelectedCountries]
+    [setHoveredCountries]
   )
 
   const clearSearch = useCallback(() => {
     setSearchKey("")
   }, [])
 
-  const handleSearchResultSelect = useCallback((result: SearchResult) => {
-    if (result.type === "event")
-      handleSelectEvent(result as SearchResult<TimelineEvent>)
-    else if (result.type === "tag")
-      handleSelectTag(result as SearchResult<EventTag>)
+  const handleSearchResultSelect = useCallback(
+    (result: SearchResult) => {
+      if (result.type === "event")
+        handleSelectEvent(result as SearchResult<TimelineEvent>)
+      else if (result.type === "tag")
+        handleSelectTag(result as SearchResult<EventTag>)
 
-    setSearchHistory(history => [result, ...history])
-    setIsOpen(false)
-    clearSearch()
-  }, [])
+      setIsOpen(false)
+      clearSearch()
+
+      if (!searchHistory.some(({ id }) => id === result.id))
+        setSearchHistory(history => [result, ...history])
+    },
+    [searchHistory]
+  )
 
   return (
-    <div className={cn("relative", className)}>
-      <label className='group/search-input flex items-center gap-1 bg-neutral-200 rounded py-1 px-2 rounded-full'>
-        <SearchIcon className='size-4 text-neutral-500' />
-
-        <input
-          type='text'
-          placeholder='Search'
-          className='outline-none text-center'
-          value={searchKey}
-          onInput={handleSearchInput}
+    <Expandable
+      isOpen={isOpen}
+      toggle={false}
+      onClickOutside={() => setIsOpen(false)}
+      onEscape={() => setIsOpen(false)}
+      trigger={
+        <SearchInput
+          searchKey={searchKey}
+          setSearchKey={setSearchKey}
           onFocus={() => setIsOpen(true)}
+          onClear={clearSearch}
         />
+      }
+      className={className}
+      contentClassName='gap-2.5'
+    >
+      {/* search results */}
+      {showResults && (
+        <div className='flex flex-col gap-1'>
+          <span className='flex items-center gap-1 px-1 text-xs text-neutral-400'>
+            <FileSearchIcon className='size-3' />
+            <small>Search Results</small>
+          </span>
 
-        <DeleteIcon
-          onClick={clearSearch}
-          className={cn(
-            "size-3 text-neutral-500 opacity-0 transition-opacity hover:text-neutral-700 hover:scale-105",
-            cleanSearchKey.length === 0 && "pointer-events-none",
-            cleanSearchKey.length > 0 && "opacity-100"
-          )}
-        />
-
-        <div className='absolute flex items-center gap-2 top-1/2 right-2 -translate-y-1/2 text-[10px] pointer-events-none transition-opacity group-focus-within/search-input:opacity-0'>
-          <KeyboardKey>Ctrl</KeyboardKey>
-          <span className='font-mono'>+</span>
-
-          <KeyboardKey>K</KeyboardKey>
+          {searchResults.map(item => (
+            <SearchResultItem
+              key={item.id}
+              item={item}
+              onClick={() => handleSearchResultSelect(item)}
+            />
+          ))}
         </div>
-      </label>
+      )}
 
-      {isOpen && (
-        <div className='absolute flex flex-col gap-1 p-1 rounded-md bg-neutral-200 top-[calc(100%+var(--spacing))] left-1/2 -translate-x-1/2 min-w-min w-full'>
-          {showResults && (
-            <div className='flex flex-col gap-1'>
-              <strong className='text-xs font-semibold text-neutral-500 px-1'>
-                Search Results
-              </strong>
+      {/* recent searchs */}
+      {recentSearchs.length > 0 && (
+        <div className='flex flex-col gap-1'>
+          <span className='flex items-center gap-1 px-1 text-xs text-neutral-400'>
+            <HistoryIcon className='size-3' />
+            <small>Recent Searchs</small>
+          </span>
 
-              {searchResults.map((item, index) => (
-                <SearchResultItem
-                  key={index}
-                  item={item}
-                  onClick={() => handleSearchResultSelect(item)}
-                />
-              ))}
-            </div>
-          )}
+          {recentSearchs.map(item => (
+            <SearchResultItem
+              key={item.id}
+              item={item}
+              onClick={() => handleSearchResultSelect(item)}
+            />
+          ))}
+        </div>
+      )}
 
-          <div className='flex flex-col gap-1'>
-            <strong className='text-xs font-semibold text-neutral-500 px-1'>
-              Recent Searchs
-            </strong>
+      {/* search help */}
+      {!cleanSearchKey && (
+        <div className='flex items-center gap-2 text-xs p-2 text-neutral-500'>
+          <span>Search</span>
 
-            {searchHistory.map((item, index) => (
-              <SearchResultItem
-                key={index}
-                item={item}
-                onClick={() => handleSearchResultSelect(item)}
-              />
-            ))}
+          <div className='flex items-center gap-1'>
+            <CalendarIcon className='size-3' />
+            <span>Events</span>
+          </div>
+
+          <small>,</small>
+
+          <div className='flex items-center gap-1'>
+            <TagIcon className='size-3' />
+            <span>Tags</span>
+          </div>
+          <small>,</small>
+
+          <div className='flex items-center gap-1'>
+            <UserIcon className='size-3' />
+            <span>People</span>
+          </div>
+          <small>,</small>
+
+          <div className='flex items-center gap-1'>
+            <BookIcon className='size-3' />
+            <span>Stories</span>
+          </div>
+          <small>,</small>
+
+          <div className='flex items-center gap-1'>
+            <MapIcon className='size-3' />
+            <span>Locations</span>
           </div>
         </div>
       )}
-    </div>
+    </Expandable>
   )
 }

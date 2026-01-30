@@ -11,3 +11,7 @@ export function getChildrenIds(ids: string[], parentId: string) {
       countCharacter(id, ":") === countCharacter(parentId, ":") + 1
   )
 }
+
+export function getClenSearchKey(searchKey: string) {
+  return searchKey.toLowerCase().trim()
+}

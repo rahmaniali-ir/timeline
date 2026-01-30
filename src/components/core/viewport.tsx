@@ -9,7 +9,7 @@ export function Viewport() {
         <WorldMap className='absolute inset-0 text-neutral-200' />
       </div>
 
-      <Timeline className='flex-1' />
+      <Timeline className='flex-1 z-30' />
 
       <TimelineOptions className='fixed top-4 right-4 z-10' />
     </div>

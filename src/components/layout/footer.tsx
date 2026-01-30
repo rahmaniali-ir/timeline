@@ -3,7 +3,7 @@ import { GithubIcon } from "../icons/github"
 
 export function Footer() {
   return (
-    <footer className='group/footer flex items-center justify-center gap-2 text-xs text-neutral-400 mt-auto'>
+    <footer className='group/footer flex items-center justify-center gap-2 text-xs text-neutral-400 mt-auto z-30'>
       <span>Developed with</span>
 
       <div className='flex items-center gap-1'>

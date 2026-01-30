@@ -122,12 +122,7 @@ function Timeline({
   }
 
   return (
-    <div
-      className={cn(
-        "relative flex items-end mask-x overflow-hidden",
-        className
-      )}
-    >
+    <div className={cn("relative flex items-end", className)}>
       <div
         ref={containerRef}
         onWheel={onWheel}
@@ -136,13 +131,11 @@ function Timeline({
         onMouseUp={stopPanning}
         onMouseLeave={stopPanning}
         className={cn(
-          "absolute left-0 bottom-0 w-full flex flex-col gap-8 justify-end pt-24 pb-64 px-8",
+          "absolute left-0 bottom-0 w-full flex flex-col gap-8 justify-end pt-24 pb-64 px-8 overflow-hidden mask-x",
           "bg-linear-to-b from-transparent to-background",
           isPanningRef.current && "cursor-grabbing"
         )}
       >
-        <strong className='b-8'>{zoom}</strong>
-
         <div className='relative flex h-1 bg-neutral-200 w-full'>
           {positionedEvents.map(e => (
             <EventElement

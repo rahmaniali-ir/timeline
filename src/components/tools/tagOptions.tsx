@@ -1,12 +1,13 @@
 import { useTimeline } from "@/contexts/timeline"
 import type { ListItem } from "@/types/list"
 import { SearchIcon, TagsIcon } from "lucide-react"
+import { useCallback, useMemo, useState, type FormEventHandler } from "react"
 import { NestedList } from "../core/nestedList"
 import { OptionsGroup } from "../core/optionsGroup"
-import { useCallback, useMemo, useState, type FormEventHandler } from "react"
+import { TagBadge } from "../core/tagBadge"
 
 export function TagsOptions() {
-  const { tags, activeTags, toggleTag } = useTimeline()
+  const { tags, activeTags, getActiveTags, toggleTag } = useTimeline()
 
   const [searchKey, setSearchKey] = useState("")
 
@@ -21,6 +22,8 @@ export function TagsOptions() {
       })),
     [tags, searchKey]
   )
+
+  const selectedTags = useMemo(() => getActiveTags(), [getActiveTags])
 
   const handleSearchInput: FormEventHandler<HTMLInputElement> = useCallback(
     e => {
@@ -43,6 +46,12 @@ export function TagsOptions() {
           className='py-1 outline-none text-xs'
         />
       </label>
+
+      <div className='flex items-center gap-2'>
+        {selectedTags.map(tag => (
+          <TagBadge key={tag.id} tag={tag} />
+        ))}
+      </div>
 
       <NestedList
         list={tagsList}

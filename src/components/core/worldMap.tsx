@@ -70,8 +70,9 @@ function MapBoundary({
             src={"/images/flags/" + id + ".jpg"}
             alt={name}
             className={cn(
-              "size-[1em] rounded-full object-cover",
-              selected && "animate-pop"
+              "size-[1em] rounded-full object-cover transition-all duration-300",
+              selected && "animate-pop",
+              hovered && selected && "scale-125"
             )}
           />
 

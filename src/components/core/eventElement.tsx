@@ -1,4 +1,5 @@
 import { useTimeline } from "@/contexts/timeline"
+import { countCharacter } from "@/lib/strings"
 import { getFormattedYear } from "@/lib/time"
 import { cn } from "@/lib/utils"
 import type { EventTag, PositionedEvent } from "@/types/event"
@@ -6,8 +7,14 @@ import { CalendarIcon } from "lucide-react"
 import { useCallback, useMemo, useState } from "react"
 
 export function EventElement({ event, left, width }: PositionedEvent) {
-  const { tags, viewStart, viewEnd, startCountryHovering, endCountryHovering } =
-    useTimeline()
+  const {
+    tags,
+    activeTags,
+    viewStart,
+    viewEnd,
+    startCountryHovering,
+    endCountryHovering,
+  } = useTimeline()
 
   const [imageError, setImageError] = useState(false)
 
@@ -22,13 +29,18 @@ export function EventElement({ event, left, width }: PositionedEvent) {
     return tags.filter(tag => event.tags?.includes(tag.id))
   }, [tags, event.tags])
 
+  const activeEventTags = useMemo(
+    () => eventTags.filter(t => activeTags.includes(t.id)),
+    [eventTags, activeTags]
+  )
+
   const tagsColors = useMemo(() => {
-    const colorfulTags = eventTags.filter(tag => tag.color) as Array<
+    const colorfulTags = activeEventTags.filter(tag => tag.color) as Array<
       EventTag & { color: string }
     >
 
     return colorfulTags.map(tag => tag.color)
-  }, [eventTags])
+  }, [activeEventTags])
 
   const links = useMemo(
     () => (event.links ? Object.entries(event.links) : []),
@@ -47,6 +59,19 @@ export function EventElement({ event, left, width }: PositionedEvent) {
 
   const mainImage = useMemo(() => images[0], [images])
 
+  const rowIndex = useMemo(() => {
+    if (!hasRange) return 0
+
+    const tags = event.tags ?? []
+
+    return (
+      tags
+        .map(t => countCharacter(t, ":"))
+        .sort()
+        .at(-1) ?? 0
+    )
+  }, [event.tags])
+
   const onMouseEnter = useCallback(() => {
     event.counteries?.forEach(c => startCountryHovering(c))
   }, [])
@@ -64,7 +89,7 @@ export function EventElement({ event, left, width }: PositionedEvent) {
         width: `${width}%`,
         transition: "left 0.1s ease, width 0.1s ease",
       }}
-      className='group/event absolute top-1/2 -translate-y-1/2 hover:z-10'
+      className='group/event absolute hover:z-10'
     >
       {/* back image */}
       {mainImage && !imageError && (
@@ -196,7 +221,7 @@ export function EventElement({ event, left, width }: PositionedEvent) {
       <div
         className={cn(
           "animate-appear absolute px-2 origin-left top-0 rotate-90 text-nowrap text-xs isolate group-hover/event:letter-spacing-2 group-hover/event:font-semibold",
-          "before:absolute before:-z-10 before:inset-x-0 before:-inset-y-6 before:bg-linear-to-b before:from-transparent before:via-background before:to-transparent before:pointer-events-none",
+          "before:absolute before:-z-10 before:inset-x-0 before:-inset-y-1 before:bg-linear-to-b before:opacity-75 before:bg-[linear-gradient(to_top,transparent,var(--background)_15%,var(--background)_85%,transparent)] before:pointer-events-none",
           startDate.year < viewStart && "left-8",
           endDate.year > viewEnd && "left-[calc(100%-calc(var(--spacing)*8))]",
           startDate.year >= viewStart && endDate.year <= viewEnd && "left-1/2"

@@ -44,6 +44,8 @@ interface TimelineContextType {
   toggleCountrySelection: (countryId: string) => void
   setHoveredEvents: (events: TimelineEvent[]) => void
   setSelectedEvents: (events: TimelineEvent[]) => void
+  getTag: (id: string) => EventTag | undefined
+  getActiveTags: () => EventTag[]
 }
 
 const TimelineContext = createContext<TimelineContextType>({
@@ -78,6 +80,8 @@ const TimelineContext = createContext<TimelineContextType>({
   toggleCountrySelection: (_: string) => {},
   setHoveredEvents: (_: TimelineEvent[]) => {},
   setSelectedEvents: (_: TimelineEvent[]) => {},
+  getTag: (_: string) => undefined,
+  getActiveTags: () => [],
 })
 
 export function TimelineProvider({ children }: { children: React.ReactNode }) {
@@ -158,14 +162,9 @@ export function TimelineProvider({ children }: { children: React.ReactNode }) {
       const isActive = activeTags.includes(tagId)
 
       if (isActive) {
-        setActiveTags(
-          activeTags.filter(id => id !== tagId && !id.startsWith(tagId + ":"))
-        )
+        setActiveTags(activeTags.filter(id => id !== tagId))
       } else {
-        const childTags =
-          TAGS.filter(t => t.id.startsWith(tagId + ":")).map(t => t.id) ?? []
-
-        setActiveTags([...activeTags, tagId, ...childTags])
+        setActiveTags([...activeTags, tagId])
       }
     },
     [activeTags]
@@ -220,6 +219,16 @@ export function TimelineProvider({ children }: { children: React.ReactNode }) {
     [isCountrySelected, selectCountry, deselectCountry]
   )
 
+  const getTag = useCallback(
+    (id: string) => tags.find(t => t.id === id),
+    [tags]
+  )
+
+  const getActiveTags = useCallback(
+    () => activeTags.map(getTag).filter(tag => !!tag),
+    [getTag, activeTags]
+  )
+
   useEffect(() => {
     const paramTagsString = params["tags"] || undefined
     const paramTags = paramTagsString?.split(",") ?? []
@@ -263,6 +272,8 @@ export function TimelineProvider({ children }: { children: React.ReactNode }) {
         toggleCountrySelection,
         setHoveredEvents,
         setSelectedEvents,
+        getTag,
+        getActiveTags,
       }}
     >
       {children}
