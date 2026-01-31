@@ -92,7 +92,7 @@ export function EventElement({ event, left, width }: PositionedEvent) {
       className='group/event absolute hover:z-10'
     >
       {/* back image */}
-      {mainImage && !imageError && (
+      {/* {mainImage && !imageError && (
         <img
           src={mainImage}
           alt={event.title}
@@ -102,10 +102,11 @@ export function EventElement({ event, left, width }: PositionedEvent) {
             "mix-blend-mode-darken max-h-[200px] transition-all duration-500 group-hover/event:opacity-50"
           )}
         />
-      )}
+      )} */}
 
       {/* indicator */}
       <div
+        id={"event-element-" + event.id}
         className={cn(
           "h-2.5 animate-scale-y absolute w-full top-1/2 left-1/2 -translate-1/2 bg-neutral-200 z-20 rounded-full",
           "transition-all duration-300 group-hover/event:bg-neutral-400 group-hover/event:h-3.5",
@@ -117,7 +118,7 @@ export function EventElement({ event, left, width }: PositionedEvent) {
       />
 
       {/* range labels */}
-      <div
+      {/* <div
         className={cn(
           "absolute bottom-full left-0 w-full text-xs font-mono opacity-0 translate-y-4 pointer-events-none transition-all",
           "group-hover/event:opacity-100 group-hover/event:translate-y-2"
@@ -137,10 +138,10 @@ export function EventElement({ event, left, width }: PositionedEvent) {
             {endYear.value} {endYear.unit}
           </div>
         )}
-      </div>
+      </div> */}
 
       {/* event image */}
-      {mainImage && (
+      {/* {mainImage && (
         <div
           className={cn(
             "size-8 absolute left-1/2 bottom-[calc(100%+16px)] -translate-x-1/2 bg-neutral-300 rounded-full isolate",
@@ -161,10 +162,10 @@ export function EventElement({ event, left, width }: PositionedEvent) {
             <CalendarIcon className='size-4 absolute left-1/2 top-1/2 -translate-1/2 text-neutral-400' />
           )}
         </div>
-      )}
+      )} */}
 
       {/* event details */}
-      <div
+      {/* <div
         className={cn(
           "hidden absolute bottom-[calc(100%+80px)] left-1/2 -translate-x-1/2 p-2 text-xs rounded-md",
           "bg-neutral-200 border border-neutral-300",
@@ -215,7 +216,7 @@ export function EventElement({ event, left, width }: PositionedEvent) {
             ))}
           </small>
         )}
-      </div>
+      </div> */}
 
       {/* title */}
       <div

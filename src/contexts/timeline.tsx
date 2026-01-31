@@ -91,9 +91,9 @@ const TimelineContext = createContext<TimelineContextType>({
   setSelectedEvents: (_: TimelineEvent[]) => {},
   getTag: (_: string) => undefined,
   getActiveTags: () => [],
-  setMapZoom: (_: number) => {},
-  setMapPanX: (_: number) => {},
-  setMapPanY: (_: number) => {},
+  setMapZoom: (_: number | ((prev: number) => number)) => {},
+  setMapPanX: (_: number | ((prev: number) => number)) => {},
+  setMapPanY: (_: number | ((prev: number) => number)) => {},
 })
 
 export function TimelineProvider({ children }: { children: React.ReactNode }) {

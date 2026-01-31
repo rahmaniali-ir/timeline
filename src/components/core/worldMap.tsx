@@ -343,8 +343,13 @@ export function WorldMap({ className }: { className?: string }) {
           transform: `translate(${mapPanX}px, ${mapPanY}px) scale(${mapZoom})`,
           transformOrigin: "center center",
         }}
-        className='w-full h-full'
+        className='w-full h-full isolate'
       >
+        {/* <img
+          src='/images/maps/map-1.jpg'
+          className='absolute top-0 left-0 size-full object-contain -z-10'
+        /> */}
+
         <SVGWorldMap ref={svgRef} className='text-neutral-200' />
       </div>
 
