@@ -24,6 +24,9 @@ interface TimelineContextType {
   selectedCountries: string[]
   hoveredEvents: TimelineEvent[]
   selectedEvents: TimelineEvent[]
+  mapZoom: number
+  mapPanX: number
+  mapPanY: number
   setViewStart: (year: number) => void
   setViewEnd: (year: number) => void
   toPercent: (year: number) => number
@@ -46,6 +49,9 @@ interface TimelineContextType {
   setSelectedEvents: (events: TimelineEvent[]) => void
   getTag: (id: string) => EventTag | undefined
   getActiveTags: () => EventTag[]
+  setMapZoom: (zoom: number | ((prev: number) => number)) => void
+  setMapPanX: (x: number | ((prev: number) => number)) => void
+  setMapPanY: (y: number | ((prev: number) => number)) => void
 }
 
 const TimelineContext = createContext<TimelineContextType>({
@@ -60,6 +66,9 @@ const TimelineContext = createContext<TimelineContextType>({
   selectedCountries: [],
   hoveredEvents: [],
   selectedEvents: [],
+  mapZoom: 1,
+  mapPanX: 0,
+  mapPanY: 0,
   setViewStart: (_: number) => {},
   setViewEnd: (_: number) => {},
   toPercent: (_: number) => 0,
@@ -82,6 +91,9 @@ const TimelineContext = createContext<TimelineContextType>({
   setSelectedEvents: (_: TimelineEvent[]) => {},
   getTag: (_: string) => undefined,
   getActiveTags: () => [],
+  setMapZoom: (_: number) => {},
+  setMapPanX: (_: number) => {},
+  setMapPanY: (_: number) => {},
 })
 
 export function TimelineProvider({ children }: { children: React.ReactNode }) {
@@ -99,6 +111,10 @@ export function TimelineProvider({ children }: { children: React.ReactNode }) {
 
   const [hoveredCountries, setHoveredCountries] = useState<string[]>([])
   const [selectedCountries, setSelectedCountries] = useState<string[]>([])
+
+  const [mapZoom, setMapZoom] = useState(1)
+  const [mapPanX, setMapPanX] = useState(0)
+  const [mapPanY, setMapPanY] = useState(0)
 
   const range = useMemo(() => viewEnd - viewStart, [viewEnd, viewStart])
 
@@ -229,6 +245,39 @@ export function TimelineProvider({ children }: { children: React.ReactNode }) {
     [getTag, activeTags]
   )
 
+  const handleSetMapZoom = useCallback(
+    (zoom: number | ((prev: number) => number)) => {
+      if (typeof zoom === "function") {
+        setMapZoom(prev => zoom(prev))
+      } else {
+        setMapZoom(zoom)
+      }
+    },
+    []
+  )
+
+  const handleSetMapPanX = useCallback(
+    (x: number | ((prev: number) => number)) => {
+      if (typeof x === "function") {
+        setMapPanX(prev => x(prev))
+      } else {
+        setMapPanX(x)
+      }
+    },
+    []
+  )
+
+  const handleSetMapPanY = useCallback(
+    (y: number | ((prev: number) => number)) => {
+      if (typeof y === "function") {
+        setMapPanY(prev => y(prev))
+      } else {
+        setMapPanY(y)
+      }
+    },
+    []
+  )
+
   useEffect(() => {
     const paramTagsString = params["tags"] || undefined
     const paramTags = paramTagsString?.split(",") ?? []
@@ -277,6 +326,13 @@ export function TimelineProvider({ children }: { children: React.ReactNode }) {
         selectCountry,
         deselectCountry,
         toggleCountrySelection,
+
+        mapZoom,
+        mapPanX,
+        mapPanY,
+        setMapZoom: handleSetMapZoom,
+        setMapPanX: handleSetMapPanX,
+        setMapPanY: handleSetMapPanY,
       }}
     >
       {children}

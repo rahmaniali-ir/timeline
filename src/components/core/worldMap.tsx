@@ -1,7 +1,7 @@
 import { COUNTRIES } from "@/constants/countries"
 import { useTimeline } from "@/contexts/timeline"
 import { cn } from "@/lib/utils"
-import { useCallback, useEffect, useMemo, useRef } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { SVGWorldMap } from "./svgWorldMap"
 
 type CountryLabelSize = "xs" | "sm" | "md" | "lg" | "xl"
@@ -92,9 +92,23 @@ export function WorldMap({ className }: { className?: string }) {
     isCountrySelected,
     toggleCountrySelection,
     setSelectedCountries,
+    mapZoom,
+    mapPanX,
+    mapPanY,
+    setMapZoom,
+    setMapPanX,
+    setMapPanY,
   } = useTimeline()
 
   const svgRef = useRef<SVGGElement>(null)
+
+  const containerRef = useRef<HTMLDivElement>(null)
+  const svgWrapperRef = useRef<HTMLDivElement>(null)
+
+  const isPanningRef = useRef(false)
+  const lastXRef = useRef(0)
+  const lastYRef = useRef(0)
+  const [isPanning, setIsPanning] = useState(false)
 
   const countryElements = useMemo(() => {
     const elements =
@@ -145,7 +159,15 @@ export function WorldMap({ className }: { className?: string }) {
             selected: isCountrySelected(id),
           }
         }),
-    [getCountryElements, visibleCountries, hoveredCountries, isCountrySelected]
+    [
+      getCountryElements,
+      visibleCountries,
+      hoveredCountries,
+      isCountrySelected,
+      mapZoom,
+      mapPanX,
+      mapPanY,
+    ]
   )
 
   useEffect(() => {
@@ -169,6 +191,91 @@ export function WorldMap({ className }: { className?: string }) {
     selectedCountriesElements,
     isCountrySelected,
   ])
+
+  function onWheel(e: React.WheelEvent) {
+    const container = containerRef.current
+    if (!container) return
+
+    e.preventDefault()
+
+    const rect = container.getBoundingClientRect()
+    const mouseX = e.clientX - rect.left
+    const mouseY = e.clientY - rect.top
+    const width = rect.width
+    const height = rect.height
+
+    // mouse position relative to center (in pixels)
+    const centerX = width / 2
+    const centerY = height / 2
+    const mouseOffsetX = mouseX - centerX
+    const mouseOffsetY = mouseY - centerY
+
+    // zoom strength
+    const zoomIntensity = 0.001
+    const zoomFactor = Math.exp(-e.deltaY * zoomIntensity)
+    const newZoom = Math.max(0.1, Math.min(10, mapZoom * zoomFactor))
+
+    // adjust pan to keep mouse position fixed in SVG space
+    // The mouse position in SVG space before zoom
+    const svgMouseX = mouseOffsetX / mapZoom + mapPanX
+    const svgMouseY = mouseOffsetY / mapZoom + mapPanY
+
+    // After zoom, we want the same SVG point under the mouse
+    const newPanX = svgMouseX - mouseOffsetX / newZoom
+    const newPanY = svgMouseY - mouseOffsetY / newZoom
+
+    setMapZoom(newZoom)
+    setMapPanX(newPanX)
+    setMapPanY(newPanY)
+  }
+
+  function onMouseDown(e: React.MouseEvent) {
+    // Only pan with middle mouse button (button 1)
+    if (e.button !== 1) return
+    e.preventDefault()
+    isPanningRef.current = true
+    setIsPanning(true)
+    lastXRef.current = e.clientX
+    lastYRef.current = e.clientY
+  }
+
+  function onMouseMove(e: React.MouseEvent) {
+    if (!isPanningRef.current) return
+
+    const container = containerRef.current
+    if (!container) return
+
+    const dx = e.clientX - lastXRef.current
+    const dy = e.clientY - lastYRef.current
+    lastXRef.current = e.clientX
+    lastYRef.current = e.clientY
+
+    // Convert pixel movement to SVG coordinate movement
+    const deltaX = dx / mapZoom
+    const deltaY = dy / mapZoom
+
+    setMapPanX(prev => prev + deltaX)
+    setMapPanY(prev => prev + deltaY)
+  }
+
+  function stopPanning() {
+    isPanningRef.current = false
+    setIsPanning(false)
+  }
+
+  useEffect(() => {
+    const handleGlobalMouseUp = (e: MouseEvent) => {
+      if (e.button === 1) {
+        stopPanning()
+      }
+    }
+
+    window.addEventListener("mouseup", handleGlobalMouseUp)
+
+    return () => {
+      window.removeEventListener("mouseup", handleGlobalMouseUp)
+    }
+  }, [])
 
   useEffect(() => {
     const mouseEnterListener = (e: MouseEvent) => {
@@ -217,10 +324,31 @@ export function WorldMap({ className }: { className?: string }) {
   }, [countryElements, toggleCountrySelection, setSelectedCountries])
 
   return (
-    <div className={cn("relative", className)}>
-      <SVGWorldMap ref={svgRef} className='text-neutral-200' />
+    <div
+      ref={containerRef}
+      className={cn("relative overflow-hidden", className)}
+      onWheel={onWheel}
+      onMouseDown={onMouseDown}
+      onMouseMove={onMouseMove}
+      onMouseUp={stopPanning}
+      onMouseLeave={stopPanning}
+      onContextMenu={e => e.preventDefault()}
+      style={{
+        cursor: isPanning ? "grabbing" : "default",
+      }}
+    >
+      <div
+        ref={svgWrapperRef}
+        style={{
+          transform: `translate(${mapPanX}px, ${mapPanY}px) scale(${mapZoom})`,
+          transformOrigin: "center center",
+        }}
+        className='w-full h-full'
+      >
+        <SVGWorldMap ref={svgRef} className='text-neutral-200' />
+      </div>
 
-      {countriesBoundaries.map((boundary, index) => (
+      {countriesBoundaries.map(boundary => (
         <MapBoundary key={boundary.id} {...boundary} />
       ))}
     </div>
