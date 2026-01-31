@@ -8,9 +8,10 @@ import {
 } from "lucide-react"
 import { useState } from "react"
 import { MapOptions } from "../tools/mapOpations"
+import { PeopleOptions } from "../tools/peopleOptions"
+import { TagsOptions } from "../tools/tagOptions"
 import { Button } from "../ui/button"
 import { OptionsGroup } from "./optionsGroup"
-import { TagsOptions } from "../tools/tagOptions"
 
 export function TimelineOptions({ className }: { className?: string }) {
   const [isOpen, setIsOpen] = useState(true)
@@ -49,10 +50,12 @@ export function TimelineOptions({ className }: { className?: string }) {
       {isOpen && (
         <div className='flex flex-col gap-1'>
           <TagsOptions />
-          <MapOptions />
 
-          <OptionsGroup name='Timeline' icon={ChartGanttIcon} />
           <OptionsGroup name='Stories' icon={BookIcon} />
+          <PeopleOptions />
+
+          <MapOptions />
+          <OptionsGroup name='Timeline' icon={ChartGanttIcon} />
         </div>
       )}
     </div>

@@ -5,6 +5,7 @@ export interface ListItem {
   name: string
   icon?: Icon
   image?: string
+  backgroundImage?: string
   color?: string
   className?: string
 }

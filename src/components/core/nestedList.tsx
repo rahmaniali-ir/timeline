@@ -18,6 +18,7 @@ export function NestedItem({
   name,
   color,
   image,
+  backgroundImage,
   searchKey,
   className,
   onClick,
@@ -34,6 +35,7 @@ export function NestedItem({
   onMouseLeave?: (id: string) => void
 }) {
   const [isOpen, setIsOpen] = useState(false)
+  const [imageError, setImageError] = useState(false)
 
   const selected = useMemo(
     () => selectedItems?.includes(id),
@@ -68,17 +70,36 @@ export function NestedItem({
       {/* header */}
       <div
         className={cn(
-          "group/tag-toggle flex items-center gap-1 p-1 justify-start rounded-[inherit] bg-neutral-100/50 transition-all duration-100 hover:bg-neutral-100",
+          "group/tag-toggle relative flex items-center gap-1 p-1 justify-start rounded-[inherit] bg-neutral-100/50 transition-all duration-100 hover:bg-neutral-100",
           hovered && "bg-neutral-100",
           className
         )}
       >
+        {/* item details */}
         <div
           onClick={() => onClick?.(id)}
-          className='flex items-center gap-1 flex-1 pe-4'
+          className='flex items-center gap-1 flex-1 pe-4 rounded-[inherit]'
         >
+          {/* background image */}
+          {backgroundImage && !imageError && (
+            <div className='w-8 rounded-[inherit] rounded-e-none pointer-events-none'>
+              <div className='absolute left-0 top-0 h-full w-8 overflow-hidden rounded-[inherit] circle-mask-r-sm transition-all group-hover/tag-toggle:w-10'>
+                <img
+                  src={backgroundImage}
+                  alt={name}
+                  onError={() => setImageError(true)}
+                  className={cn(
+                    "absolute left-0 top-0 size-full grayscale-100 opacity-50 object-cover rounded-[inherit] transition-all",
+                    "group-hover/tag-toggle:grayscale-0 group-hover/tag-toggle:opacity-90 group-hover/tag-toggle:scale-130",
+                    selected && "grayscale-0 opacity-75 scale-115"
+                  )}
+                />
+              </div>
+            </div>
+          )}
+
           {/* checkbox */}
-          <div className='relative'>
+          <div className='relative pointer-events-none'>
             <SquircleIcon
               className={cn(
                 "size-3 text-neutral-400",
@@ -111,23 +132,24 @@ export function NestedItem({
                 color: selected ? color : undefined,
               }}
               className={cn(
-                "size-3 text-neutral-400",
+                "size-3 text-neutral-400 pointer-events-none",
                 selected && "text-current"
               )}
             />
           )}
 
-          {image && (
+          {image && !imageError && (
             <img
               src={image}
               alt={name}
-              className='size-3 rounded-full object-cover'
+              onError={() => setImageError(true)}
+              className='size-3 rounded-full object-cover pointer-events-none'
             />
           )}
 
           <span
             className={cn(
-              "text-xs text-neutral-500",
+              "text-xs text-neutral-500 pointer-events-none",
               selected && "text-neutral-800"
             )}
           >
@@ -135,6 +157,7 @@ export function NestedItem({
           </span>
         </div>
 
+        {/* toggle button */}
         {hasChildren && (
           <Button
             onClick={toggleOpen}
@@ -154,7 +177,7 @@ export function NestedItem({
       {isOpen && hasChildren && (
         <div
           className={cn(
-            "relative flex flex-col gap-0.5 mt-0.5 p-0.5 ps-4 pe-0 mb-1 z-10",
+            "relative flex flex-col gap-0.5 mt-0.5 p-0.5 ps-4 pe-0 mb-1 z-10 rounded-[inherit]",
             "before:absolute before:h-full before:w-px before:bg-neutral-400/50 before:left-2.5 before:top-0"
           )}
         >
@@ -166,11 +189,11 @@ export function NestedItem({
               hoveredItems={hoveredItems}
               selectedItems={selectedItems}
               onClick={id => onClick?.(id.startsWith(id + ":") ? child.id : id)}
-              onMouseEnter={id =>
-                onMouseEnter?.(id.startsWith(id + ":") ? child.id : id)
+              onMouseEnter={enteredId =>
+                onMouseEnter?.(enteredId.startsWith(id + ":") ? child.id : id)
               }
-              onMouseLeave={id =>
-                onMouseLeave?.(id.startsWith(id + ":") ? child.id : id)
+              onMouseLeave={leftId =>
+                onMouseLeave?.(leftId.startsWith(id + ":") ? child.id : id)
               }
             />
           ))}

@@ -1,29 +1,39 @@
 import { COUNTRIES_LIST } from "@/constants/countries"
 import { useTimeline } from "@/contexts/timeline"
 import type { ListItem } from "@/types/list"
-import { MapIcon, SearchIcon } from "lucide-react"
+import { MapIcon, SearchIcon, UsersIcon } from "lucide-react"
 import { useCallback, useMemo, useState, type FormEventHandler } from "react"
 import { NestedList } from "../core/nestedList"
 import { OptionsGroup } from "../core/optionsGroup"
+import { PEOPLE } from "@/constants/people"
 
-export function MapOptions() {
-  const {
-    hoveredCountries,
-    selectedCountries,
-    toggleCountrySelection,
-    startCountryHovering,
-    endCountryHovering,
-  } = useTimeline()
+export function PeopleOptions() {
+  // const {
+  //   hoveredCountries,
+  //   selectedCountries,
+  //   toggleCountrySelection,
+  //   startCountryHovering,
+  //   endCountryHovering,
+  // } = useTimeline()
 
   const [searchKey, setSearchKey] = useState("")
 
-  const countriesList: ListItem[] = useMemo(
+  // const countriesList: ListItem[] = useMemo(
+  //   () =>
+  //     COUNTRIES_LIST.map(country => ({
+  //       id: country.id,
+  //       name: country.name,
+  //       image: country.flag,
+  //     })),
+  //   [searchKey]
+  // )
+
+  const peopleList: ListItem[] = useMemo(
     () =>
-      COUNTRIES_LIST.map(country => ({
-        id: country.id,
-        name: country.name,
-        image: "/images/flags/" + country.id + ".jpg",
-        backgroundImage: "/images/flags/" + country.id + ".jpg",
+      PEOPLE.map(person => ({
+        id: person.id,
+        name: person.name,
+        backgroundImage: person.images?.[0].src,
       })),
     [searchKey]
   )
@@ -38,7 +48,7 @@ export function MapOptions() {
   )
 
   return (
-    <OptionsGroup name='Map' icon={MapIcon}>
+    <OptionsGroup name='People' icon={UsersIcon}>
       <label className='sticky top-0 flex items-center gap-1 px-1.5 bg-neutral-300/50 backdrop-blur-sm rounded-md z-20'>
         <SearchIcon className='size-3 text-neutral-500' />
 
@@ -51,13 +61,13 @@ export function MapOptions() {
       </label>
 
       <NestedList
-        list={countriesList}
-        hoveredItems={hoveredCountries}
-        selectedItems={selectedCountries}
+        list={peopleList}
+        // hoveredItems={hoveredCountries}
+        // selectedItems={selectedCountries}
         searchKey={searchKey}
-        onSelect={id => toggleCountrySelection(id)}
-        onHoverStart={id => startCountryHovering(id)}
-        onHoverEnd={id => endCountryHovering(id)}
+        // onSelect={id => toggleCountrySelection(id)}
+        // onHoverStart={id => startCountryHovering(id)}
+        // onHoverEnd={id => endCountryHovering(id)}
       />
     </OptionsGroup>
   )

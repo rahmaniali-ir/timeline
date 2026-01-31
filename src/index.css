@@ -223,12 +223,38 @@ body {
 }
 
 @layer utilities {
+  .mask-none {
+    mask-image: none;
+  }
+
   .mask-x {
     mask-image: linear-gradient(
       to right,
       transparent,
       white calc(var(--spacing) * 4),
       white calc(100% - calc(var(--spacing) * 4)),
+      transparent
+    );
+  }
+
+  .mask-r {
+    mask-image: linear-gradient(to right, white, transparent);
+  }
+
+  .mask-r-sm {
+    mask-image: linear-gradient(
+      to right,
+      white,
+      white calc(100% - calc(var(--spacing) * 2)),
+      transparent
+    );
+  }
+
+  .mask-r-xs {
+    mask-image: linear-gradient(
+      to right,
+      white,
+      white calc(100% - var(--spacing)),
       transparent
     );
   }
@@ -245,6 +271,16 @@ body {
 
   .ellipse-mask-b {
     mask-image: radial-gradient(ellipse at bottom, white, transparent 75%);
+  }
+
+  .circle-mask-r-sm {
+    mask-image: radial-gradient(
+      circle at left,
+      white,
+      white calc(100% - calc(var(--spacing) * 3)),
+      transparent calc(100% - calc(var(--spacing) * 1)),
+      transparent
+    );
   }
 
   .mask-t {

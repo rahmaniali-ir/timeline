@@ -1,3 +1,4 @@
+import type { TimePoint } from "./core"
 import type { Icon } from "./icon"
 
 export interface EventTag {
@@ -6,14 +7,6 @@ export interface EventTag {
   color?: string
   icon?: Icon
   className?: string
-}
-
-export interface TimePoint {
-  year: number
-  month?: number
-  day?: number
-  hour?: number
-  minute?: number
 }
 
 export interface TimelineEvent {
@@ -28,6 +21,7 @@ export interface TimelineEvent {
   images?: string[]
   location?: string
   counteries?: string[]
+  people?: string[]
 }
 
 export interface TimePointRange {
