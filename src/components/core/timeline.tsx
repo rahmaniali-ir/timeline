@@ -131,7 +131,7 @@ function Timeline({
         onMouseUp={stopPanning}
         onMouseLeave={stopPanning}
         className={cn(
-          "absolute left-0 bottom-0 w-full flex flex-col gap-8 justify-end pt-24 pb-64 px-8 overflow-hidden mask-x",
+          "w-full flex flex-col gap-8 justify-end pt-8 pb-32 px-8 overflow-hidden mask-x",
           "bg-linear-to-b from-transparent to-background",
           isPanningRef.current && "cursor-grabbing"
         )}

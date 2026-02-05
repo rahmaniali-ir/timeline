@@ -130,7 +130,7 @@ function SearchInput({
   const [isFocused, setIsFocused] = useState(true)
 
   return (
-    <label className='group/search-input flex items-center gap-1 bg-neutral-200 rounded px-2 rounded-full w-full transition-all'>
+    <label className='group/search-input flex items-center gap-1 bg-neutral-transparent focus-within:bg-neutral-50/75 rounded-sm px-2 py-0.5 w-full transition-all'>
       <SearchIcon className='size-4 text-neutral-500' />
 
       <input

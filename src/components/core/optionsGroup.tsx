@@ -33,7 +33,7 @@ export function OptionsGroup({
   useEffect(() => setIsOpen(open), [open, setOpen])
 
   return (
-    <div className='relative flex flex-col gap-2 p-1 bg-neutral-200 rounded-lg border-2 border-neutral-100/50 min-w-[250px]'>
+    <div className='relative flex flex-col gap-2 p-1 bg-neutral-200/50 backdrop-blur-sm rounded-lg border-2 border-neutral-100/25 min-w-[250px]'>
       <Button
         onClick={toggleOpen}
         variant='ghost'

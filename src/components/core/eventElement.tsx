@@ -12,6 +12,7 @@ export function EventElement({ event, left, width }: PositionedEvent) {
     activeTags,
     viewStart,
     viewEnd,
+    getTag,
     startCountryHovering,
     endCountryHovering,
   } = useTimeline()
@@ -26,11 +27,11 @@ export function EventElement({ event, left, width }: PositionedEvent) {
   const endYear = getFormattedYear(endDate.year)
 
   const eventTags = useMemo(() => {
-    return tags.filter(tag => event.tags?.includes(tag.id))
-  }, [tags, event.tags])
+    return event.tags?.map((id => getTag(id))).filter(t => !!t) || []
+  }, [event.tags, getTag])
 
   const activeEventTags = useMemo(
-    () => eventTags.filter(t => activeTags.includes(t.id)),
+    () => eventTags.filter(t => activeTags.some(activeId => activeId === t.id)),
     [eventTags, activeTags]
   )
 
@@ -89,7 +90,7 @@ export function EventElement({ event, left, width }: PositionedEvent) {
         width: `${width}%`,
         transition: "left 0.1s ease, width 0.1s ease",
       }}
-      className='group/event absolute hover:z-10'
+      className='group/event absolute hover:z-20'
     >
       {/* back image */}
       {/* {mainImage && !imageError && (
@@ -221,11 +222,11 @@ export function EventElement({ event, left, width }: PositionedEvent) {
       {/* title */}
       <div
         className={cn(
-          "animate-appear absolute px-2 origin-left top-0 rotate-90 text-nowrap text-xs isolate group-hover/event:letter-spacing-2 group-hover/event:font-semibold",
+          "animate-appear absolute px-2 origin-left top-0 left-1/2 rotate-90 text-nowrap text-xs isolate group-hover/event:letter-spacing-2 group-hover/event:font-semibold",
           "before:absolute before:-z-10 before:inset-x-0 before:-inset-y-1 before:bg-linear-to-b before:opacity-75 before:bg-[linear-gradient(to_top,transparent,var(--background)_15%,var(--background)_85%,transparent)] before:pointer-events-none",
-          startDate.year < viewStart && "left-8",
-          endDate.year > viewEnd && "left-[calc(100%-calc(var(--spacing)*8))]",
-          startDate.year >= viewStart && endDate.year <= viewEnd && "left-1/2"
+          // startDate.year < viewStart && "left-8",
+          // endDate.year > viewEnd && "left-[calc(100%-calc(var(--spacing)*8))]",
+          // startDate.year >= viewStart && endDate.year <= viewEnd && "left-1/2"
         )}
         style={{
           transition: "left .5s ease",

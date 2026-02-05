@@ -17,8 +17,8 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   --radius: 0.625rem;
-  --background: var(--color-neutral-100);
-  --foreground: oklch(0.145 0 0);
+  --background: var(--color-neutral-950);
+  --foreground: var(--color-neutral-100);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
@@ -266,6 +266,15 @@ body {
       white calc(var(--spacing) * 4),
       white calc(100% - calc(var(--spacing) * 4)),
       transparent
+    );
+  }
+
+  .mask-t-sm {
+    mask-image: linear-gradient(
+      to bottom,
+      transparent,
+      white calc(var(--spacing) * 4),
+      white
     );
   }
 
