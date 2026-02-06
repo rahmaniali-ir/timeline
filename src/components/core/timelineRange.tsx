@@ -11,7 +11,9 @@ export function TimelineRange({ className }: { className?: string }) {
       <RangeList />
 
       <YearInput value={viewStart} onChange={setViewStart} />
-      <span className='text-neutral-300 font-bold text-2xl'>–</span>
+
+      <div className='bg-neutral-300 h-px w-8' />
+
       <YearInput value={viewEnd} onChange={setViewEnd} />
     </div>
   )

@@ -54,7 +54,7 @@ export default function YearInput({
   }, [value])
 
   return (
-    <label className='group/yearInput flex items-center gap-0.5 rounded-lg text-neutral-600 focus-within:text-neutral-800'>
+    <label className='group/yearInput flex items-center gap-0.5 rounded-lg text-neutral-600 dark:text-neutral-100 focus-within:text-neutral-800'>
       <input
         type='number'
         className={cn(

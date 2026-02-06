@@ -1,6 +1,6 @@
 import { OrbitControls } from '@react-three/drei'
-import { Canvas, useThree, useFrame } from '@react-three/fiber'
-import { useRef, useEffect, useState } from 'react'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
+import { useEffect, useRef, useState } from 'react'
 import { Earth } from '../space/earth'
 import { SkyBox } from '../space/skyBox'
 
@@ -158,12 +158,6 @@ export default function SpaceScene() {
       <SkyBox />
 
       <ambientLight intensity={5.5} />
-      {/* <directionalLight lookAt={[0, 0, 0]} position={[0, 5, 5]} intensity={8} /> */}
-
-      <mesh position={[15, 5, 5]}>
-        <sphereGeometry args={[2, 16, 16]} />
-        <meshStandardMaterial color="#00ff00" />
-      </mesh>
 
       <Earth />
     </Canvas>
