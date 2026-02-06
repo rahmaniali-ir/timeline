@@ -1,8 +1,83 @@
-import { OrbitControls } from '@react-three/drei'
+import { OrbitControls, Html } from '@react-three/drei'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { useEffect, useRef, useState } from 'react'
+import { Suspense, useEffect, useRef, useState, useLayoutEffect } from 'react'
 import { Earth } from '../space/earth'
 import { SkyBox } from '../space/skyBox'
+
+// Component to wrap loading manager callbacks and defer all state updates
+// Must run synchronously before any other components subscribe
+function DeferredLoadingManager() {
+  const { gl } = useThree()
+
+  useLayoutEffect(() => {
+    // Access the loading manager from the WebGL renderer
+    const loadingManager = (gl as any).loadingManager
+
+    if (!loadingManager) return
+
+    // Store original callbacks
+    const originalOnProgress = loadingManager.onProgress
+    const originalOnLoad = loadingManager.onLoad
+    const originalOnError = loadingManager.onError
+
+    // Wrap callbacks to defer any state updates
+    loadingManager.onProgress = (url: string, loaded: number, total: number) => {
+      // Defer the callback execution to avoid setState during render
+      if (originalOnProgress) {
+        // Use setTimeout with 0 to defer to next event loop
+        setTimeout(() => {
+          originalOnProgress(url, loaded, total)
+        }, 0)
+      }
+    }
+
+    loadingManager.onLoad = () => {
+      if (originalOnLoad) {
+        setTimeout(() => {
+          originalOnLoad()
+        }, 0)
+      }
+    }
+
+    loadingManager.onError = (url: string) => {
+      if (originalOnError) {
+        setTimeout(() => {
+          originalOnError(url)
+        }, 0)
+      }
+    }
+
+    return () => {
+      // Restore original callbacks
+      loadingManager.onProgress = originalOnProgress
+      loadingManager.onLoad = originalOnLoad
+      loadingManager.onError = originalOnError
+    }
+  }, [gl])
+
+  return null
+}
+
+function LoadingScreen() {
+  return (
+    <Html fullscreen>
+      <div
+        style={{
+          background: "black",
+          color: "white",
+          width: "100vw",
+          height: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontSize: "2rem",
+        }}
+      >
+        Loading...
+      </div>
+    </Html>
+  )
+}
 
 // Component to handle autoRotate logic inside the Canvas
 function AutoRotateController() {
@@ -138,28 +213,30 @@ function AutoRotateController() {
 
   return null
 }
-
 export default function SpaceScene() {
   return (
     <Canvas camera={{ position: [0, 0, 2] }}>
-      <OrbitControls
-        makeDefault
-        enablePan
-        enableZoom
-        autoRotate
-        autoRotateSpeed={0.5}
-        minDistance={1.25}
-        maxDistance={5}
-        enableDamping
-        dampingFactor={0.05}
-      />
-      <AutoRotateController />
+      <DeferredLoadingManager />
+      <Suspense fallback={<LoadingScreen />}>
+        <OrbitControls
+          makeDefault
+          enablePan
+          enableZoom
+          autoRotate
+          autoRotateSpeed={0.5}
+          minDistance={1.25}
+          maxDistance={5}
+          enableDamping
+          dampingFactor={0.05}
+        />
+        <AutoRotateController />
 
-      <SkyBox />
+        <SkyBox />
 
-      <ambientLight intensity={5.5} />
+        <ambientLight intensity={5.5} />
 
-      <Earth />
+        <Earth />
+      </Suspense>
     </Canvas>
   )
 }

@@ -1,10 +1,11 @@
-import { useLoader, useFrame } from "@react-three/fiber"
+import { useLoader, useFrame, useThree } from "@react-three/fiber"
 import { Hud, Line } from "@react-three/drei"
 import { useState, useRef, useMemo } from "react"
-import { FileLoader, TextureLoader, Mesh, Vector3, BufferGeometry, Shape, ShapeGeometry } from "three"
+import { FileLoader, TextureLoader, Mesh, Vector3 } from "three"
 import { EventIndicator } from "./eventIndicator"
 import { COUNTRIES_LIST } from "@/constants/countries"
 import type { Indicator } from "@/types/indicator"
+import { latLngToVector3 as latLngToVector3Util } from "@/lib/space"
 
 function latLngToVector3(
   lat: number,
@@ -21,36 +22,6 @@ function latLngToVector3(
   )
 }
 
-function polygonToShape(polygon: number[][]) {
-  const shape = new Shape()
-
-  polygon.forEach(([lng, lat], i) => {
-    const x = lng
-    const y = lat
-    if (i === 0) shape.moveTo(x, y)
-    else shape.lineTo(x, y)
-  })
-
-  return shape
-}
-
-function projectGeometryToSphere(
-  geometry: BufferGeometry,
-  radius: number
-) {
-  const pos = geometry.attributes.position
-
-  for (let i = 0; i < pos.count; i++) {
-    const lng = pos.getX(i)
-    const lat = pos.getY(i)
-
-    const v = latLngToVector3(lat, lng, radius * 1.002)
-
-    pos.setXYZ(i, v.x, v.y, v.z)
-  }
-
-  geometry.computeVertexNormals()
-}
 
 function useGeoJSON(url: string) {
   const data = useLoader(FileLoader, url)
@@ -58,7 +29,7 @@ function useGeoJSON(url: string) {
 }
 
 export function Globe({ isNight = false }: { isNight?: boolean }) {
-  const [texture, normalMap, heightMap, nightTexture] = useLoader(
+  const [texture, , , nightTexture] = useLoader(
     TextureLoader,
     [
       '/images/maps/8k_earth_daymap.jpg',
@@ -127,75 +98,105 @@ export function Atmosphere() {
   )
 }
 
-function CountryBorders({ geojson, radius = 1 }) {
-  const [hovered, setHovered] = useState(false)
-
+function CountryBorders({
+  geojson,
+  radius = 1,
+  groupRefs
+}: {
+  geojson: any,
+  radius?: number,
+  groupRefs: React.MutableRefObject<Map<number, any>>
+}) {
   return (
     <group>
       {geojson.features.map((feature, i) => {
+        // Add null check for geometry
+        if (!feature.geometry) return null
+
         const polygons =
           feature.geometry.type === "MultiPolygon"
             ? feature.geometry.coordinates
             : [feature.geometry.coordinates]
 
-        // const shape = polygonToShape(polygons[0])
-        // const geometry2D = new ShapeGeometry(shape)
+        return (
+          <group
+            key={i}
+            ref={(ref) => {
+              if (ref) {
+                groupRefs.current.set(i, ref)
+              } else {
+                groupRefs.current.delete(i)
+              }
+            }}
+          >
+            {polygons.map((polygon, j) => {
+              // Add null check for polygon
+              if (!polygon || !polygon[0]) return null
 
-        // projectGeometryToSphere(geometry2D, radius)
-
-        return <>
-          {
-            polygons.map((polygon, j) => {
               const points = polygon[0].map(
                 ([lng, lat]: number[]) =>
                   latLngToVector3(lat, lng, radius + 0.001)
               )
 
-              const geometry =
-                new BufferGeometry().setFromPoints(points)
-
               return (
                 <Line
                   key={`${i}-${j}`}
                   points={points}
-                  geometry={geometry}
                   onPointerOver={(e) => {
                     e.stopPropagation()
-                    console.log(feature.properties.NAME)
+                    console.log(feature.properties?.NAME)
                   }}
                 >
                   <lineBasicMaterial color="white" />
                 </Line>
               )
-            })
-          }
-
-          {/* <mesh
-            geometry={geometry2D}
-            onPointerOver={(e) => {
-              e.stopPropagation()
-              setHovered(feature.properties.NAME)
-            }}
-            onPointerOut={() => setHovered(null)}
-          >
-            <meshStandardMaterial
-              color={hovered ? "orange" : "#ffffff"}
-              transparent
-              opacity={hovered ? 0.6 : 0}
-              depthWrite={false}
-            />
-          </mesh> */}
-        </>
+            })}
+          </group>
+        )
       })}
     </group>
   )
 }
 
+function VisibleIndicators({
+  indicators,
+  indicatorRefs
+}: {
+  indicators: Indicator[],
+  indicatorRefs: React.MutableRefObject<Map<string, any>>
+}) {
+  return (
+    <>
+      {indicators.map((indicator) => (
+        <group
+          key={indicator.id}
+          ref={(ref) => {
+            if (ref) {
+              indicatorRefs.current.set(indicator.id, ref)
+            }
+          }}
+        >
+          <EventIndicator indicator={indicator} />
+        </group>
+      ))}
+    </>
+  )
+}
+
 export function Earth() {
-  const geo = useGeoJSON("/geojson/ne_10m_admin_0_countries.json")
-  if (!geo) return null
+  const { camera } = useThree()
+
+  const geo = useGeoJSON("/geojson/countries.geojson")
 
   const [isNight] = useState(false)
+  // Use refs to store visibility data to avoid state updates during render
+  const visibleFeaturesRef = useRef<Set<number>>(new Set())
+  const visibleIndicatorsRef = useRef<Set<string>>(new Set())
+
+  const frameCountRef = useRef(0)
+  const lastCameraDirRef = useRef<Vector3 | null>(null)
+  const countryGroupRefs = useRef<Map<number, any>>(new Map())
+  const indicatorGroupRefs = useRef<Map<string, any>>(new Map())
 
   const indicators: Indicator[] = useMemo(() => {
     const indicators: Indicator[] = []
@@ -211,6 +212,94 @@ export function Earth() {
     return indicators
   }, [])
 
+  // Pre-compute country feature centers for faster visibility checks
+  const countryCenters = useMemo(() => {
+    if (!geo) return []
+
+    return geo.features.map((feature: any) => {
+      if (!feature.geometry) return null
+
+      const polygons =
+        feature.geometry.type === "MultiPolygon"
+          ? feature.geometry.coordinates
+          : [feature.geometry.coordinates]
+
+      const firstPoint = polygons[0]?.[0]?.[0] // [lng, lat]
+      if (firstPoint) {
+        const [lng, lat] = firstPoint
+        return latLngToVector3(lat, lng, 1).normalize()
+      }
+
+      return null
+    })
+  }, [geo])
+
+  // Throttled visibility check - only every 5 frames and if camera moved significantly
+  useFrame(() => {
+    if (!geo) return
+
+    frameCountRef.current++
+
+    // Only check every 5 frames
+    if (frameCountRef.current % 5 !== 0) return
+
+    const cameraPosition = new Vector3()
+    camera.getWorldPosition(cameraPosition)
+    const cameraDirection = cameraPosition.clone().normalize()
+
+    // Only update if camera direction changed significantly (threshold: 0.05)
+    if (lastCameraDirRef.current) {
+      const angleChange = cameraDirection.dot(lastCameraDirRef.current)
+      if (angleChange > 0.998) { // ~3.6 degrees change threshold
+        return // Camera hasn't moved enough, skip update
+      }
+    }
+    lastCameraDirRef.current = cameraDirection.clone()
+
+    // Check which country features are visible using pre-computed centers
+    const newVisibleFeatures = new Set<number>()
+    countryCenters.forEach((center, i) => {
+      if (center) {
+        const dotProduct = center.dot(cameraDirection)
+        if (dotProduct > 0) {
+          newVisibleFeatures.add(i)
+        }
+      }
+    })
+
+    // Check which indicators are visible
+    const newVisibleIndicators = new Set<string>()
+    indicators.forEach((indicator) => {
+      if (indicator.latLng) {
+        const pointPos = latLngToVector3Util(indicator.latLng.lat, indicator.latLng.lng, 1).normalize()
+        const dotProduct = pointPos.dot(cameraDirection)
+
+        if (dotProduct > 0) {
+          newVisibleIndicators.add(indicator.id)
+        }
+      }
+    })
+
+    // Update refs directly (no state update during render)
+    visibleFeaturesRef.current = newVisibleFeatures
+    visibleIndicatorsRef.current = newVisibleIndicators
+
+    // Update Three.js object visibility directly (no React updates)
+    countryGroupRefs.current.forEach((group, featureIndex) => {
+      if (group) {
+        group.visible = newVisibleFeatures.has(featureIndex)
+      }
+    })
+
+    indicatorGroupRefs.current.forEach((group, id) => {
+      if (group) {
+        group.visible = newVisibleIndicators.has(id)
+      }
+    })
+  })
+
+  if (!geo) return null
+
   return (
     <group>
       <Globe isNight={isNight} />
@@ -218,22 +307,18 @@ export function Earth() {
       <Atmosphere />
 
       {/* Countries */}
-      <CountryBorders geojson={geo} radius={1} />
+      <CountryBorders
+        geojson={geo}
+        radius={1}
+        groupRefs={countryGroupRefs}
+      />
 
       {/* indicators */}
       <Hud>
-        {indicators.map((indicator) => (
-          <EventIndicator
-            key={indicator.id}
-            indicator={indicator}
-          />
-        )
-        )}
-
-        {/* <EventIndicator title="Tehran" color="green" lat={35.6892} lng={51.3890} />
-        <EventIndicator title="London" color="green" lat={51.5074} lng={-0.1278} />
-        <EventIndicator title="Tokyo" color="green" lat={35.6762} lng={139.6503} />
-        <EventIndicator title="Everest" color="red" lat={27.9881} lng={86.9253} /> */}
+        <VisibleIndicators
+          indicators={indicators}
+          indicatorRefs={indicatorGroupRefs}
+        />
       </Hud>
     </group>
   )
