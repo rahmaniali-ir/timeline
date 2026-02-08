@@ -1,6 +1,7 @@
-import { OrbitControls, Html } from '@react-three/drei'
+import { useTimeline } from '@/contexts/timeline'
+import { Html, OrbitControls } from '@react-three/drei'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { Suspense, useEffect, useRef, useState, useLayoutEffect } from 'react'
+import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Earth } from '../space/earth'
 import { SkyBox } from '../space/skyBox'
 
@@ -62,16 +63,7 @@ function LoadingScreen() {
   return (
     <Html fullscreen>
       <div
-        style={{
-          background: "black",
-          color: "white",
-          width: "100vw",
-          height: "100vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontSize: "2rem",
-        }}
+        className='size-full flex items-center justify-center font-bold text-2xl bg-background'
       >
         Loading...
       </div>
@@ -214,15 +206,18 @@ function AutoRotateController() {
   return null
 }
 export default function SpaceScene() {
+  const { isNight, globeAutoRotate, showGlobeSkyBox } = useTimeline()
+
   return (
-    <Canvas camera={{ position: [0, 0, 2] }}>
+    <Canvas camera={{ position: [0, 0, 2], near: 0.01 }}>
       <DeferredLoadingManager />
+
       <Suspense fallback={<LoadingScreen />}>
         <OrbitControls
           makeDefault
           enablePan
           enableZoom
-          autoRotate
+          autoRotate={globeAutoRotate}
           autoRotateSpeed={0.5}
           minDistance={1.25}
           maxDistance={5}
@@ -231,9 +226,9 @@ export default function SpaceScene() {
         />
         <AutoRotateController />
 
-        <SkyBox />
+        {showGlobeSkyBox && <SkyBox />}
 
-        <ambientLight intensity={5.5} />
+        <ambientLight intensity={isNight ? 14 : 2} />
 
         <Earth />
       </Suspense>

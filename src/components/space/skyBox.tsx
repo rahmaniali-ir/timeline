@@ -1,22 +1,21 @@
 import { TextureLoader, BackSide } from "three"
 import { useLoader } from "@react-three/fiber"
+import { useTimeline } from "@/contexts/timeline"
 
 export function SkyBox() {
-  const texture = useLoader(TextureLoader, '/images/maps/8k_stars_milky_way.jpg')
-  // const meshRef = useRef<THREE.Mesh>(null!)
-
-  // useFrame(() => {
-  //   // subtle rotation for life
-  //   meshRef.current.rotation.y += 0.0002
-  // })
+  const { isNight } = useTimeline()
+  const texture = useLoader(
+    TextureLoader,
+    `/maps/textures/${isNight ? '8k_stars_milky_way.jpg' : '8k_stars_milky_way_light.jpg'}`
+  )
 
   return (
-    // <mesh ref={meshRef}>
     <mesh>
       <sphereGeometry args={[50, 64, 64]} />
-      <meshBasicMaterial
+      <meshStandardMaterial
         map={texture}
         side={BackSide}
+        roughness={0}
       />
     </mesh>
   )

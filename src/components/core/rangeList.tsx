@@ -5,6 +5,7 @@ import type { EraRange } from "@/types/era"
 import { CalendarRangeIcon } from "lucide-react"
 import { useState } from "react"
 import { Button } from "../ui/button"
+import { cn } from "@/lib/utils"
 
 function RangeListItem({
   name,
@@ -43,7 +44,7 @@ function RangeListItem({
   )
 }
 
-export function RangeList() {
+export function RangeList({ className }: { className?: string }) {
   const { setViewStart, setViewEnd } = useTimeline()
 
   const [isOpen, setIsOpen] = useState(false)
@@ -58,11 +59,11 @@ export function RangeList() {
   }
 
   return (
-    <div className='relative'>
+    <div className={cn("relative", className)}>
       <Button
         onClick={toggleOpen}
         variant='ghost'
-        className='size-auto! p-2! -ms-1.5 text-neutral-600 hover:bg-neutral-200'
+        className='size-auto! p-2! -ms-1.5 text-neutral-800 dark:text-neutral-300 hover:bg-neutral-200'
       >
         <CalendarRangeIcon className='size-3.5' />
       </Button>

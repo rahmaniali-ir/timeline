@@ -131,12 +131,12 @@ function Timeline({
         onMouseUp={stopPanning}
         onMouseLeave={stopPanning}
         className={cn(
-          "w-full flex flex-col gap-8 justify-end pt-8 pb-32 px-8 overflow-hidden mask-x",
+          "w-full flex flex-col gap-8 justify-end pt-32 pb-16 px-8",
           "bg-linear-to-b from-transparent to-background",
           isPanningRef.current && "cursor-grabbing"
         )}
       >
-        <div className='relative flex h-1 bg-neutral-200 w-full'>
+        <div className='relative flex h-1 bg-neutral-300 dark:bg-neutral-200 w-full'>
           {positionedEvents.map(e => (
             <EventElement
               key={e.event.id}

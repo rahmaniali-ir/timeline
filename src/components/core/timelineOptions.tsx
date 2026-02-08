@@ -7,11 +7,12 @@ import {
   UploadIcon,
 } from "lucide-react"
 import { useState } from "react"
-import { MapOptions } from "../tools/mapOpations"
+import { CountriesOptions } from "../tools/countriesOpations"
 import { PeopleOptions } from "../tools/peopleOptions"
 import { TagsOptions } from "../tools/tagOptions"
 import { Button } from "../ui/button"
 import { OptionsGroup } from "./optionsGroup"
+import { MapOptions } from "../tools/mapOptions"
 
 export function TimelineOptions({ className }: { className?: string }) {
   const [isOpen, setIsOpen] = useState(true)
@@ -26,14 +27,16 @@ export function TimelineOptions({ className }: { className?: string }) {
       <div className='flex items-center gap-1 justify-end'>
         <Button
           size='icon-sm'
-          className='bg-neutral-200 text-current hover:bg-neutral-300'
+          variant='ghost'
+          className="backdrop-blur-sm"
         >
           <Share2Icon className='size-3' />
         </Button>
 
         <Button
           size='icon-sm'
-          className='bg-neutral-200 text-current hover:bg-neutral-300'
+          variant='ghost'
+          className="backdrop-blur-sm"
         >
           <UploadIcon className='size-3' />
         </Button>
@@ -41,7 +44,8 @@ export function TimelineOptions({ className }: { className?: string }) {
         <Button
           onClick={toggleOpen}
           size='icon-sm'
-          className='bg-neutral-200 text-current hover:bg-neutral-300'
+          variant='ghost'
+          className="backdrop-blur-sm"
         >
           <ListTreeIcon className='size-3' />
         </Button>
@@ -49,12 +53,13 @@ export function TimelineOptions({ className }: { className?: string }) {
 
       {isOpen && (
         <div className='flex flex-col gap-1'>
+          <MapOptions />
+
           <TagsOptions />
 
-          <OptionsGroup name='Stories' icon={BookIcon} />
           <PeopleOptions />
 
-          <MapOptions />
+          <CountriesOptions />
           <OptionsGroup name='Timeline' icon={ChartGanttIcon} />
         </div>
       )}

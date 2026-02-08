@@ -30,6 +30,8 @@ export function EventElement({ event, left, width }: PositionedEvent) {
     return event.tags?.map((id => getTag(id))).filter(t => !!t) || []
   }, [event.tags, getTag])
 
+  const hasTags = useMemo(() => eventTags.length > 0, [eventTags])
+
   const activeEventTags = useMemo(
     () => eventTags.filter(t => activeTags.some(activeId => activeId === t.id)),
     [eventTags, activeTags]
@@ -109,13 +111,14 @@ export function EventElement({ event, left, width }: PositionedEvent) {
       <div
         id={"event-element-" + event.id}
         className={cn(
-          "h-2.5 animate-scale-y absolute w-full top-1/2 left-1/2 -translate-1/2 bg-neutral-200 z-20 rounded-full",
-          "transition-all duration-300 group-hover/event:bg-neutral-400 group-hover/event:h-3.5",
-          "before:absolute before:left-1/2 before:-translate-x-1/2 before:w-full before:h-full before:border-2 before:border-neutral-400 before:rounded-full before:mix-blend-darken"
+          "w-full h-2.5 absolute top-1/2 left-1/2 -translate-1/2 bg-neutral-500 dark:bg-neutral-400 animate-scale-y z-20 rounded-xs",
+          "transition-all duration-300 group-hover/event:h-3.5",
+          "group-hover/event:bg-primary-500 dark:group-hover/event:bg-primary-500",
+          // "before:absolute before:left-1/2 before:-translate-x-1/2 before:w-full before:h-full before:border-2 before:border-neutral-400 before:rounded-full before:mix-blend-darken"
         )}
-        style={{
-          background: tagsGradient,
-        }}
+      // style={{
+      //   background: tagsGradient,
+      // }}
       />
 
       {/* range labels */}
@@ -222,18 +225,28 @@ export function EventElement({ event, left, width }: PositionedEvent) {
       {/* title */}
       <div
         className={cn(
-          "animate-appear absolute px-2 origin-left top-0 left-1/2 rotate-90 text-nowrap text-xs isolate group-hover/event:letter-spacing-2 group-hover/event:font-semibold",
-          "before:absolute before:-z-10 before:inset-x-0 before:-inset-y-1 before:bg-linear-to-b before:opacity-75 before:bg-[linear-gradient(to_top,transparent,var(--background)_15%,var(--background)_85%,transparent)] before:pointer-events-none",
+          "leading-none! absolute text-nowrap text-xs isolate",
+          "rounded-sm rounded-bl-none",
+          hasTags && "bg-background py-1 px-2 origin-left bottom-4 left-1/2 -translate-x-1/5 -rotate-30 group-hover/event:letter-spacing-2 group-hover/event:font-semibold",
+          !hasTags && "top-4 left-1/2 -translate-x-1/2"
+          // "before:absolute before:-z-10 before:inset-x-0 before:-inset-y-1 before:bg-linear-to-b before:opacity-75 before:bg-[linear-gradient(to_top,transparent,var(--background)_15%,var(--background)_85%,transparent)] before:pointer-events-none",
           // startDate.year < viewStart && "left-8",
           // endDate.year > viewEnd && "left-[calc(100%-calc(var(--spacing)*8))]",
           // startDate.year >= viewStart && endDate.year <= viewEnd && "left-1/2"
         )}
         style={{
+          bottom: `calc(var(--spacing) * ${(rowIndex / 10) * 20 + 3})`,
           transition: "left .5s ease",
+          textShadow: "0 0 16px color-mix(in srgb, currentColor 50%, transparent)"
         }}
       >
         {event.title}
       </div>
+
+      {hasTags && <div className={cn(
+        "w-px h-8 bg-neutral-300 dark:bg-neutral-500 absolute bottom-0 left-1/2 -translate-x-1/2 opacity-50",
+        "group-hover/event:opacity-100"
+      )}></div>}
     </div>
   )
 }

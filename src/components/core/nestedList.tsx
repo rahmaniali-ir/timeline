@@ -9,6 +9,7 @@ import {
 } from "lucide-react"
 import { useCallback, useMemo, useState } from "react"
 import { Button } from "../ui/button"
+import { CheckBox } from "./checkBox"
 
 export function NestedItem({
   list,
@@ -99,32 +100,12 @@ export function NestedItem({
           )}
 
           {/* checkbox */}
-          <div className='relative pointer-events-none'>
-            <SquircleIcon
-              className={cn(
-                "size-3 text-neutral-400",
-                "group-hover/tag-toggle:text-neutral-500"
-              )}
-            />
-
-            {selected ? (
-              <CheckIcon
-                // style={{
-                //   color: tag.color,
-                // }}
-                className={cn(
-                  "size-2 absolute top-1/2 left-1/2 -translate-1/2"
-                  // tag.className
-                )}
-              />
-            ) : hasSelectedChildren ? (
-              <MinusIcon
-                className={cn(
-                  "size-1.5 absolute top-1/2 left-1/2 -translate-1/2 text-neutral-600"
-                )}
-              />
-            ) : null}
-          </div>
+          <CheckBox
+            checked={selected}
+            mixed={hasSelectedChildren}
+            color={color}
+            className='pointer-events-none'
+          />
 
           {listItem.icon && (
             <listItem.icon

@@ -1,8 +1,10 @@
 import { EVENTS } from "@/constants/events"
+import { MAPS } from "@/constants/maps"
 import { TAGS } from "@/constants/tags"
 import { BIG_BANG_YEAR, WORLD_MAX, WORLD_MIN } from "@/constants/world"
 import { useParams } from "@/hooks/useParams"
 import type { EventTag, TimelineEvent } from "@/types/event"
+import type { MapInfo } from "@/types/map"
 import {
   createContext,
   useCallback,
@@ -11,6 +13,7 @@ import {
   useMemo,
   useState,
 } from "react"
+import { useTheme } from "./theme"
 
 interface TimelineContextType {
   viewStart: number
@@ -27,6 +30,12 @@ interface TimelineContextType {
   mapZoom: number
   mapPanX: number
   mapPanY: number
+  selectedGlobeMap: MapInfo
+  showGlobeClouds: boolean
+  showGlobeAtmosphere: boolean
+  showGlobeSkyBox: boolean
+  globeAutoRotate: boolean
+  isNight: boolean
   setViewStart: (year: number) => void
   setViewEnd: (year: number) => void
   toPercent: (year: number) => number
@@ -52,6 +61,11 @@ interface TimelineContextType {
   setMapZoom: (zoom: number | ((prev: number) => number)) => void
   setMapPanX: (x: number | ((prev: number) => number)) => void
   setMapPanY: (y: number | ((prev: number) => number)) => void
+  setSelectedGlobeMap: (map: MapInfo) => void
+  setShowGlobeClouds: (show: boolean) => void
+  setShowGlobeAtmosphere: (show: boolean) => void
+  setShowGlobeSkyBox: (show: boolean) => void
+  setGlobeAutoRotate: (autoRotate: boolean) => void
 }
 
 const TimelineContext = createContext<TimelineContextType>({
@@ -69,37 +83,49 @@ const TimelineContext = createContext<TimelineContextType>({
   mapZoom: 1,
   mapPanX: 0,
   mapPanY: 0,
-  setViewStart: (_: number) => {},
-  setViewEnd: (_: number) => {},
+  selectedGlobeMap: MAPS.default,
+  showGlobeClouds: false,
+  showGlobeAtmosphere: false,
+  showGlobeSkyBox: false,
+  globeAutoRotate: false,
+  isNight: false,
+  setViewStart: (_: number) => { },
+  setViewEnd: (_: number) => { },
   toPercent: (_: number) => 0,
-  setEvents: () => {},
+  setEvents: () => { },
   isEventInView: (_: TimelineEvent) => false,
-  setTags: () => {},
-  setActiveTags: () => {},
+  setTags: () => { },
+  setActiveTags: () => { },
   isTagActive: (_: string) => false,
-  toggleTag: (_: string) => {},
-  startCountryHovering: (_: string) => {},
-  endCountryHovering: (_: string) => {},
+  toggleTag: (_: string) => { },
+  startCountryHovering: (_: string) => { },
+  endCountryHovering: (_: string) => { },
   getTagEvents: (_: string) => [],
-  setHoveredCountries: (_: string[]) => {},
-  setSelectedCountries: (_: string[]) => {},
+  setHoveredCountries: (_: string[]) => { },
+  setSelectedCountries: (_: string[]) => { },
   isCountrySelected: (_: string) => false,
-  selectCountry: (_: string) => {},
-  deselectCountry: (_: string) => {},
-  toggleCountrySelection: (_: string) => {},
-  setHoveredEvents: (_: TimelineEvent[]) => {},
-  setSelectedEvents: (_: TimelineEvent[]) => {},
+  selectCountry: (_: string) => { },
+  deselectCountry: (_: string) => { },
+  toggleCountrySelection: (_: string) => { },
+  setHoveredEvents: (_: TimelineEvent[]) => { },
+  setSelectedEvents: (_: TimelineEvent[]) => { },
   getTag: (_: string) => undefined,
   getActiveTags: () => [],
-  setMapZoom: (_: number | ((prev: number) => number)) => {},
-  setMapPanX: (_: number | ((prev: number) => number)) => {},
-  setMapPanY: (_: number | ((prev: number) => number)) => {},
+  setMapZoom: (_: number | ((prev: number) => number)) => { },
+  setMapPanX: (_: number | ((prev: number) => number)) => { },
+  setMapPanY: (_: number | ((prev: number) => number)) => { },
+  setShowGlobeClouds: (_: boolean) => { },
+  setShowGlobeAtmosphere: (_: boolean) => { },
+  setShowGlobeSkyBox: (_: boolean) => { },
+  setGlobeAutoRotate: (_: boolean) => { },
+  setSelectedGlobeMap: (_: MapInfo) => { },
 })
 
 export function TimelineProvider({ children }: { children: React.ReactNode }) {
+  const { setSchema } = useTheme()
   const params = useParams()
 
-  const [viewStart, setViewStart] = useState(0)
+  const [viewStart, setViewStart] = useState(2000)
   const [viewEnd, setViewEnd] = useState(WORLD_MAX)
 
   const [events, setEvents] = useState<TimelineEvent[]>(EVENTS)
@@ -115,6 +141,14 @@ export function TimelineProvider({ children }: { children: React.ReactNode }) {
   const [mapZoom, setMapZoom] = useState(1)
   const [mapPanX, setMapPanX] = useState(0)
   const [mapPanY, setMapPanY] = useState(0)
+
+  const [selectedGlobeMap, setSelectedGlobeMap] = useState(MAPS.default)
+  const [showGlobeClouds, setShowGlobeClouds] = useState(false)
+  const [showGlobeAtmosphere, setShowGlobeAtmosphere] = useState(false)
+  const [showGlobeSkyBox, setShowGlobeSkyBox] = useState(false)
+  const [globeAutoRotate, setGlobeAutoRotate] = useState(false)
+
+  const isNight = useMemo(() => selectedGlobeMap.theme === 'dark', [selectedGlobeMap])
 
   const range = useMemo(() => viewEnd - viewStart, [viewEnd, viewStart])
 
@@ -278,6 +312,14 @@ export function TimelineProvider({ children }: { children: React.ReactNode }) {
     []
   )
 
+  const handleSetSelectedGlobeMap = useCallback(
+    (map: MapInfo) => {
+      setSelectedGlobeMap(map)
+      setSchema(map.theme)
+    },
+    [setSelectedGlobeMap]
+  )
+
   useEffect(() => {
     const paramTagsString = params["tags"] || undefined
     const paramTags = paramTagsString?.split(",") ?? []
@@ -286,6 +328,12 @@ export function TimelineProvider({ children }: { children: React.ReactNode }) {
 
     setActiveTags(tags)
   }, [params])
+
+  useEffect(() => {
+    setTimeout(() => {
+      setSchema(selectedGlobeMap.theme)
+    }, 0);
+  }, [])
 
   return (
     <TimelineContext.Provider
@@ -333,6 +381,18 @@ export function TimelineProvider({ children }: { children: React.ReactNode }) {
         setMapZoom: handleSetMapZoom,
         setMapPanX: handleSetMapPanX,
         setMapPanY: handleSetMapPanY,
+
+        selectedGlobeMap,
+        showGlobeClouds,
+        showGlobeAtmosphere,
+        showGlobeSkyBox,
+        globeAutoRotate,
+        isNight,
+        setSelectedGlobeMap: handleSetSelectedGlobeMap,
+        setShowGlobeClouds,
+        setShowGlobeAtmosphere,
+        setShowGlobeSkyBox,
+        setGlobeAutoRotate,
       }}
     >
       {children}

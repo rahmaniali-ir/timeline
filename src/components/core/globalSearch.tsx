@@ -6,19 +6,20 @@ import { getEventsCountries } from "@/lib/events"
 import { getClenSearchKey } from "@/lib/strings"
 import { getFormattedYear } from "@/lib/time"
 import { cn } from "@/lib/utils"
-import type { EventTag, TimelineEvent, TimePoint } from "@/types/event"
+import type { EventTag, TimelineEvent } from "@/types/event"
 import {
   BookIcon,
   CalendarIcon,
   DeleteIcon,
   FileSearchIcon,
   HistoryIcon,
-  MapIcon,
+  MapPinIcon,
   SearchIcon,
   TagIcon,
-  UserIcon,
+  UserIcon
 } from "lucide-react"
 import { useCallback, useMemo, useState, type FormEventHandler } from "react"
+import { type TimePoint } from '../../types/core'
 import { Button } from "../ui/button"
 import { Expandable } from "./expandable"
 import { KeyboardKey } from "./keyboardKey"
@@ -65,7 +66,7 @@ function SearchResultItem({
       onClick={onClick}
       variant='ghost'
       size='sm'
-      className='size-auto! text-nowrap justify-start bg-neutral-100 text-xs py-1 ps-1.5! pe-2 hover:bg-neutral-50'
+      className='size-auto! text-nowrap justify-start bg-neutral-100 dark:bg-neutral-900 text-xs py-1 ps-1.5! pe-2 hover:bg-neutral-50'
     >
       <div className='size-5'>
         {item.image && !imageError && (
@@ -130,13 +131,13 @@ function SearchInput({
   const [isFocused, setIsFocused] = useState(true)
 
   return (
-    <label className='group/search-input flex items-center gap-1 bg-neutral-transparent focus-within:bg-neutral-50/75 rounded-sm px-2 py-0.5 w-full transition-all'>
-      <SearchIcon className='size-4 text-neutral-500' />
+    <label className='group/search-input flex items-center gap-1 bg-neutral-transparent focus-within:bg-neutral-50/75 dark:focus-within:bg-neutral-950/75 rounded-sm px-2 py-0.5 w-full transition-all'>
+      <SearchIcon className='size-4 text-neutral-500 dark:text-neutral-300/75' />
 
       <input
         type='text'
         placeholder='Search'
-        className='outline-none text-center flex-1'
+        className='outline-none text-center flex-1 placeholder:text-neutral-500 dark:placeholder:text-neutral-300/75'
         value={searchKey}
         onInput={handleOnInput}
         onFocus={() => {
@@ -354,7 +355,7 @@ export function GlobalSearch({ className }: { className?: string }) {
 
       {/* search help */}
       {!cleanSearchKey && (
-        <div className='flex items-center gap-2 text-xs p-2 text-neutral-500'>
+        <div className='flex items-center gap-2 text-xs p-2 text-neutral-500 dark:text-neutral-300'>
           <span>Search</span>
 
           <div className='flex items-center gap-1'>
@@ -383,7 +384,7 @@ export function GlobalSearch({ className }: { className?: string }) {
           <small>,</small>
 
           <div className='flex items-center gap-1'>
-            <MapIcon className='size-3' />
+            <MapPinIcon className='size-3' />
             <span>Locations</span>
           </div>
         </div>

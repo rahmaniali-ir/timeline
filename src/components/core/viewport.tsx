@@ -58,15 +58,19 @@ export function Viewport() {
 
         <SpaceScene />
 
-        {events.map(event => (
+        {/* {events.map(event => (
           <MapEventIndicator key={event.id} event={event} />
-        ))}
+        ))} */}
       </div>
 
-      <div className='flex-1 flex items-end pt-16 backdrop-blur-sm mask-t-sm'>
+      <div className="group/timeline-wrapper relative flex flex-1">
+        <div className="absolute top-0 left-0 -translate-y-1/2 py-px w-full bg-background/50 z-10 opacity-0 group-hover/timeline-wrapper:opacity-15 transition-opacity">
+          <div className="bg-background h-1 w-full"></div>
+        </div>
 
-        <Timeline className='flex-1 z-30 ' />
-
+        <div className='flex-1 flex items-end pt-16 backdrop-blur-sm mask-t-sm'>
+          <Timeline className='flex-1 z-30 ' />
+        </div>
       </div>
 
       <TimelineOptions className='fixed top-4 right-4 z-10' />

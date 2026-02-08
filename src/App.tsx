@@ -6,11 +6,11 @@ import { Navbar } from "./components/layout/navbar"
 function App() {
   return (
     <>
-    <Navbar className='fixed top-4 left-4 z-10' />
+      <Navbar className='fixed top-4 left-2 z-10' />
 
-    <Viewport />
+      <Viewport />
 
-    <Footer />
+      <Footer />
     </>
   )
 }

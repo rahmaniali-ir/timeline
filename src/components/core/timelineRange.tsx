@@ -7,14 +7,20 @@ export function TimelineRange({ className }: { className?: string }) {
   const { viewStart, viewEnd, setViewStart, setViewEnd } = useTimeline()
 
   return (
-    <div className={cn("flex items-center gap-4", className)}>
-      <RangeList />
+    <div className={cn("group/timeline-range flex items-center gap-3", className)}>
+      <div className="flex flex-col items-start">
+        <YearInput value={viewStart} onChange={setViewStart} />
+        <small className="ps-2 text-neutral-500 dark:text-neutral-400 text-[10px] leading-none">From</small>
+      </div>
 
-      <YearInput value={viewStart} onChange={setViewStart} />
+      <div className='bg-neutral-300 h-px w-10' />
 
-      <div className='bg-neutral-300 h-px w-8' />
+      <div className="flex flex-col items-start">
+        <YearInput value={viewEnd} onChange={setViewEnd} />
+        <small className="ps-2 text-neutral-500 dark:text-neutral-400 text-[10px] leading-none">To</small>
+      </div>
 
-      <YearInput value={viewEnd} onChange={setViewEnd} />
+      <RangeList className="group-hover/timeline-range:opacity-100 opacity-0 transition-opacity" />
     </div>
   )
 }

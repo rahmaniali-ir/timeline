@@ -12,11 +12,14 @@ export const EVENTS: TimelineEvent[] = [
       Wikipedia: "https://en.wikipedia.org/wiki/Year_zero",
     },
   },
-  {
-    id: "2000",
-    title: "2000",
-    startDate: { year: 2000 },
-  },
+  ...Array.from({ length: 2026 - 2000 }, (_, i) => {
+    const year = 2000 + i
+    return {
+      id: String(year),
+      title: String(year),
+      startDate: { year },
+    }
+  }),
   {
     id: String(CURRENT_YEAR),
     title: "Today!",

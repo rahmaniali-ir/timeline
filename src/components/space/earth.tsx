@@ -1,11 +1,12 @@
-import { useLoader, useFrame, useThree } from "@react-three/fiber"
-import { Hud, Line } from "@react-three/drei"
-import { useState, useRef, useMemo } from "react"
-import { FileLoader, TextureLoader, Mesh, Vector3 } from "three"
-import { EventIndicator } from "./eventIndicator"
 import { COUNTRIES_LIST } from "@/constants/countries"
-import type { Indicator } from "@/types/indicator"
+import { useTimeline } from "@/contexts/timeline"
 import { latLngToVector3 as latLngToVector3Util } from "@/lib/space"
+import type { Indicator } from "@/types/indicator"
+import { Hud, Line } from "@react-three/drei"
+import { useFrame, useLoader, useThree } from "@react-three/fiber"
+import { useMemo, useRef, useState } from "react"
+import { FileLoader, Mesh, TextureLoader, Vector3 } from "three"
+import { EventIndicator } from "./eventIndicator"
 
 function latLngToVector3(
   lat: number,
@@ -28,14 +29,15 @@ function useGeoJSON(url: string) {
   return JSON.parse(data)
 }
 
-export function Globe({ isNight = false }: { isNight?: boolean }) {
-  const [texture, , , nightTexture] = useLoader(
+export function Globe() {
+  const { selectedGlobeMap } = useTimeline()
+
+  const [texture, normalMap, heightMap] = useLoader(
     TextureLoader,
     [
-      '/images/maps/8k_earth_daymap.jpg',
-      '/images/maps/8k_earth_normal_map.jpg',
-      '/images/maps/worldHeightMap.jpg',
-      '/images/maps/8k_earth_nightmap.jpg',
+      `/maps/textures/${selectedGlobeMap.texture}`,
+      `/maps/textures/${selectedGlobeMap.normalMap}`,
+      `/maps/textures/${selectedGlobeMap.heightMap}`,
     ]
   )
 
@@ -45,14 +47,14 @@ export function Globe({ isNight = false }: { isNight?: boolean }) {
     // onPointerOver={(e) => (e.object.scale.set(1.05, 1.05, 1.05))}
     // onPointerOut={(e) => (e.object.scale.set(1, 1, 1))}
     >
-      <sphereGeometry args={[1, 512, 512]} />
+      <sphereGeometry args={[1, 256, 256]} />
 
       <meshStandardMaterial
-        map={isNight ? nightTexture : texture}
-      // displacementMap={heightMap}
-      // normalMap={normalMap}
-      // displacementScale={0.06}
-      // displacementBias={0.01}
+        map={texture}
+        displacementMap={heightMap}
+        normalMap={normalMap}
+        displacementScale={0.01}
+        displacementBias={0.01}
       />
     </mesh>
   )
@@ -85,13 +87,15 @@ export function Clouds() {
 }
 
 export function Atmosphere() {
+  const { isNight } = useTimeline()
+
   return (
     <mesh scale={[1.08, 1.08, 1.08]}>
       <sphereGeometry args={[1, 512, 512]} />
 
       <meshStandardMaterial
         transparent
-        color="#33A1B8"
+        color={isNight ? '#141833' : '#33A1B8'}
         opacity={0.2}
       />
     </mesh>
@@ -135,7 +139,7 @@ function CountryBorders({
 
               const points = polygon[0].map(
                 ([lng, lat]: number[]) =>
-                  latLngToVector3(lat, lng, radius + 0.001)
+                  latLngToVector3(lat, lng, radius + 0.02)
               )
 
               return (
@@ -146,8 +150,10 @@ function CountryBorders({
                     e.stopPropagation()
                     console.log(feature.properties?.NAME)
                   }}
+                  lineWidth={2}
+                  color='black'
                 >
-                  <lineBasicMaterial color="white" />
+                  {/* <lineBasicMaterial color='black' /> */}
                 </Line>
               )
             })}
@@ -184,9 +190,10 @@ function VisibleIndicators({
 }
 
 export function Earth() {
+  const { selectedGlobeMap, showGlobeClouds, showGlobeAtmosphere, showGlobeSkyBox } = useTimeline()
   const { camera } = useThree()
 
-  const geo = useGeoJSON("/geojson/countries.geojson")
+  const geo = useGeoJSON("/maps/countries.geojson")
 
   const [isNight] = useState(false)
   // Use refs to store visibility data to avoid state updates during render
@@ -302,9 +309,10 @@ export function Earth() {
 
   return (
     <group>
-      <Globe isNight={isNight} />
-      <Clouds />
-      <Atmosphere />
+      <Globe />
+
+      {showGlobeClouds && <Clouds />}
+      {showGlobeAtmosphere && <Atmosphere />}
 
       {/* Countries */}
       <CountryBorders

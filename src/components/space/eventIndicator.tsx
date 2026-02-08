@@ -43,7 +43,7 @@ export function EventIndicator({ indicator }: { indicator: Indicator }) {
 
   // Calculate text position above the sphere
   const textPosition = useMemo(() => {
-    const textOffset = 0.075 // Distance above the sphere
+    const textOffset = 0.04 // Distance above the sphere
     const normalized = new THREE.Vector3(...position).normalize()
     return normalized.multiplyScalar(1 + textOffset).toArray() as [number, number, number]
   }, [position])
@@ -65,7 +65,7 @@ export function EventIndicator({ indicator }: { indicator: Indicator }) {
       <Suspense fallback={null}>
         <BillboardText
           position={textPosition}
-          fontSize={0.01}
+          fontSize={0.005}
           color="#ffffff"
           anchorX="center"
           anchorY="middle"

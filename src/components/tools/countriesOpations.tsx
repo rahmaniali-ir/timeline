@@ -1,12 +1,12 @@
 import { COUNTRIES_LIST } from "@/constants/countries"
 import { useTimeline } from "@/contexts/timeline"
 import type { ListItem } from "@/types/list"
-import { MapIcon, SearchIcon } from "lucide-react"
+import { FlagIcon, SearchIcon } from "lucide-react"
 import { useCallback, useMemo, useState, type FormEventHandler } from "react"
 import { NestedList } from "../core/nestedList"
 import { OptionsGroup } from "../core/optionsGroup"
 
-export function MapOptions() {
+export function CountriesOptions() {
   const {
     hoveredCountries,
     selectedCountries,
@@ -38,7 +38,7 @@ export function MapOptions() {
   )
 
   return (
-    <OptionsGroup name='Map' icon={MapIcon}>
+    <OptionsGroup name='Countries' icon={FlagIcon}>
       <label className='sticky top-0 flex items-center gap-1 px-1.5 bg-neutral-300/50 backdrop-blur-sm rounded-md z-20'>
         <SearchIcon className='size-3 text-neutral-500' />
 
