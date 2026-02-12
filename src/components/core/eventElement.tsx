@@ -1,12 +1,11 @@
 import { useTimeline } from "@/contexts/timeline"
-import { countCharacter } from "@/lib/strings"
 import { getFormattedYear } from "@/lib/time"
 import { cn } from "@/lib/utils"
 import type { EventTag, PositionedEvent } from "@/types/event"
 import { CalendarIcon } from "lucide-react"
 import { useCallback, useMemo, useState } from "react"
 
-export function EventElement({ event, left, width }: PositionedEvent) {
+export function EventElement({ event, left, width, rowIndex, className }: PositionedEvent & { className?: string }) {
   const {
     tags,
     activeTags,
@@ -62,19 +61,6 @@ export function EventElement({ event, left, width }: PositionedEvent) {
 
   const mainImage = useMemo(() => images[0], [images])
 
-  const rowIndex = useMemo(() => {
-    if (!hasRange) return 0
-
-    const tags = event.tags ?? []
-
-    return (
-      tags
-        .map(t => countCharacter(t, ":"))
-        .sort()
-        .at(-1) ?? 0
-    )
-  }, [event.tags])
-
   const onMouseEnter = useCallback(() => {
     event.counteries?.forEach(c => startCountryHovering(c))
   }, [])
@@ -88,6 +74,7 @@ export function EventElement({ event, left, width }: PositionedEvent) {
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       style={{
+        bottom: `calc(var(--spacing) * ${rowIndex * 2 + 3})`,
         left: `${left}%`,
         width: `${width}%`,
         transition: "left 0.1s ease, width 0.1s ease",
@@ -111,9 +98,10 @@ export function EventElement({ event, left, width }: PositionedEvent) {
       <div
         id={"event-element-" + event.id}
         className={cn(
-          "w-full h-2.5 absolute top-1/2 left-1/2 -translate-1/2 bg-neutral-500 dark:bg-neutral-400 animate-scale-y z-20 rounded-xs",
-          "transition-all duration-300 group-hover/event:h-3.5",
-          "group-hover/event:bg-primary-500 dark:group-hover/event:bg-primary-500",
+          "surface w-full h-2.5 absolute! top-1/2 left-1/2 -translate-1/2 animate-scale-y z-20 rounded-xs!",
+          "transition-all duration-300 group-hover/event:h-4",
+          "group-hover/event:before:bg-primary-500 dark:group-hover/event:before:bg-primary-500",
+          className
           // "before:absolute before:left-1/2 before:-translate-x-1/2 before:w-full before:h-full before:border-2 before:border-neutral-400 before:rounded-full before:mix-blend-darken"
         )}
       // style={{
@@ -225,27 +213,31 @@ export function EventElement({ event, left, width }: PositionedEvent) {
       {/* title */}
       <div
         className={cn(
-          "leading-none! absolute text-nowrap text-xs isolate",
-          "rounded-sm rounded-bl-none",
-          hasTags && "bg-background py-1 px-2 origin-left bottom-4 left-1/2 -translate-x-1/5 -rotate-30 group-hover/event:letter-spacing-2 group-hover/event:font-semibold",
-          !hasTags && "top-4 left-1/2 -translate-x-1/2"
+          "surface flex items-center gap-1",
+          "leading-none! absolute! text-nowrap text-xs isolate",
+          "rounded-sm rounded-bl-none!",
+          hasTags && "before:bg-background py-1 px-2 origin-left bottom-4 left-1/2 -translate-x-1/5 -rotate-30 group-hover/event:letter-spacing-2 group-hover/event:font-semibold",
+          !hasTags && "top-6 left-1/2 -translate-x-1/2"
           // "before:absolute before:-z-10 before:inset-x-0 before:-inset-y-1 before:bg-linear-to-b before:opacity-75 before:bg-[linear-gradient(to_top,transparent,var(--background)_15%,var(--background)_85%,transparent)] before:pointer-events-none",
           // startDate.year < viewStart && "left-8",
           // endDate.year > viewEnd && "left-[calc(100%-calc(var(--spacing)*8))]",
           // startDate.year >= viewStart && endDate.year <= viewEnd && "left-1/2"
         )}
         style={{
-          bottom: `calc(var(--spacing) * ${(rowIndex / 10) * 20 + 3})`,
+          bottom: `calc(var(--spacing) * ${rowIndex * 2 + 3})`,
           transition: "left .5s ease",
           textShadow: "0 0 16px color-mix(in srgb, currentColor 50%, transparent)"
         }}
       >
-        {event.title}
+        {mainImage && <img src={mainImage} alt={event.title} className="size-4 rounded-sm object-cover" />}
+
+        <span>{event.title}</span>
       </div>
 
+      {/* line */}
       {hasTags && <div className={cn(
-        "w-px h-8 bg-neutral-300 dark:bg-neutral-500 absolute bottom-0 left-1/2 -translate-x-1/2 opacity-50",
-        "group-hover/event:opacity-100"
+        "w-px h-8 bg-neutral-400 dark:bg-neutral-500 absolute bottom-0 left-1/2 -translate-x-1/2 opacity-50",
+        "group-hover/event:opacity-100 group-hover/event:bg-neutral-500 dark:group-hover/event:bg-neutral-300"
       )}></div>}
     </div>
   )

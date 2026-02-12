@@ -116,7 +116,7 @@ export function Expandable({
     <div
       ref={containerRef}
       className={cn(
-        "relative flex flex-col gap-2 p-1 bg-neutral-300/50 dark:bg-neutral-700/50 backdrop-blur-sm rounded-lg border-2 border-neutral-100/25 dark:border-neutral-800/25 min-w-[250px]",
+        "surface relative flex flex-col gap-2 p-1",
         className
       )}
     >

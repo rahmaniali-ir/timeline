@@ -248,6 +248,22 @@ body {
 }
 
 @layer utilities {
+  .surface {
+    @apply relative isolate rounded-lg;
+
+    &::before {
+      @apply absolute inset-0 rounded-[inherit] -z-10;
+      @apply backdrop-blur-sm bg-neutral-300/50;
+      @apply border-2 border-neutral-100/25;
+
+      content: "";
+    }
+  }
+
+  .dark .surface::before {
+    @apply bg-neutral-700/50 border-neutral-800/25;
+  }
+
   .mask-none {
     mask-image: none;
   }

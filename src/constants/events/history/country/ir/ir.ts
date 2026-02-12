@@ -259,7 +259,7 @@ const events: TimelineEvent[] = [
       "history:country:ir:government:islamic-republic",
       "history:religion:islam",
     ],
-    images: ["/images/iran-iraq-war.jpg"],
+    images: ["iran-iraq-war.jpg"],
     counteries: ["ir", "iq"],
   },
   {

@@ -61,7 +61,7 @@ export function MapOptions() {
             key={map.id}
             onClick={() => setSelectedGlobeMap(map)}
             variant="ghost"
-            className="h-auto! w-auto! flex-col items-start gap-1 bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-900 rounded-md p-1 text-xs"
+            className="h-auto! w-auto! flex-col items-start gap-1 bg-neutral-200 dark:bg-neutral-700/50 rounded-md p-1 text-xs"
           >
             <img src={'/maps/thumbnails/' + map.thumbnail} alt={map.name} className="h-8 w-full object-cover rounded-t-sm" />
 

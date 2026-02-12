@@ -1,10 +1,9 @@
 import { cn } from "@/lib/utils"
 import {
-  BookIcon,
   ChartGanttIcon,
   ListTreeIcon,
   Share2Icon,
-  UploadIcon,
+  UploadIcon
 } from "lucide-react"
 import { useState } from "react"
 import { CountriesOptions } from "../tools/countriesOpations"
@@ -12,7 +11,6 @@ import { PeopleOptions } from "../tools/peopleOptions"
 import { TagsOptions } from "../tools/tagOptions"
 import { Button } from "../ui/button"
 import { OptionsGroup } from "./optionsGroup"
-import { MapOptions } from "../tools/mapOptions"
 
 export function TimelineOptions({ className }: { className?: string }) {
   const [isOpen, setIsOpen] = useState(true)
@@ -52,14 +50,13 @@ export function TimelineOptions({ className }: { className?: string }) {
       </div>
 
       {isOpen && (
-        <div className='flex flex-col gap-1'>
-          <MapOptions />
-
+        <div className='flex flex-col gap-1 min-w-[250px]'>
           <TagsOptions />
 
           <PeopleOptions />
 
           <CountriesOptions />
+
           <OptionsGroup name='Timeline' icon={ChartGanttIcon} />
         </div>
       )}

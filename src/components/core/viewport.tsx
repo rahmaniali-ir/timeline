@@ -68,8 +68,8 @@ export function Viewport() {
           <div className="bg-background h-1 w-full"></div>
         </div>
 
-        <div className='flex-1 flex items-end pt-16 backdrop-blur-sm mask-t-sm'>
-          <Timeline className='flex-1 z-30 ' />
+        <div className='flex-1 flex items-end pt-16'>
+          <Timeline className='flex-1 z-30' />
         </div>
       </div>
 

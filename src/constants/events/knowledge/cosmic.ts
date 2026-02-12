@@ -91,7 +91,7 @@ const events: TimelineEvent[] = [
     tags: ["knowledge:cosmic"],
     description:
       "A prolonged period of global cooling marked by recurring glacial cycles that reshaped Earth's surface and influenced the evolution and spread of early humans.",
-    images: ["/images/ice-age.jpg"],
+    images: ["ice-age.jpg"],
   },
   {
     id: "humans",

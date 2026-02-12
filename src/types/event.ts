@@ -29,8 +29,14 @@ export interface TimePointRange {
   to: TimePoint
 }
 
-export interface PositionedEvent {
-  event: TimelineEvent
+export type Positioned<T extends {} = Object> = T & {
   left: number
   width: number
+}
+
+export interface PositionedEvent extends Positioned {
+  event: TimelineEvent
+  rowIndex: number
+  /** For event titles layer; omitted for year labels. */
+  titleRowIndex?: number
 }

@@ -63,7 +63,7 @@ export function Globe() {
 export function Clouds() {
   const [cloudsTexture] = useLoader(
     TextureLoader,
-    ['/images/maps/8k_earth_clouds.jpg']
+    ['/maps/textures/8k_earth_clouds.jpg']
   )
   const meshRef = useRef<Mesh>(null)
 

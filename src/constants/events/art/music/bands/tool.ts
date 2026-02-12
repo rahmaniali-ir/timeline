@@ -9,7 +9,7 @@ const events: TimelineEvent[] = [
     links: {
       Spotify: "https://open.spotify.com/artist/tool",
     },
-    images: ["/images/tool-fearInoculum.png"],
+    images: ["tool-fearInoculum.png"],
     counteries: ["us"],
   },
   {
@@ -20,7 +20,7 @@ const events: TimelineEvent[] = [
     links: {
       Spotify: "https://open.spotify.com/artist/tool",
     },
-    images: ["/images/tool-10000Days.png"],
+    images: ["tool-10000Days.png"],
     counteries: ["us"],
   },
   {
@@ -31,7 +31,7 @@ const events: TimelineEvent[] = [
     links: {
       Spotify: "https://open.spotify.com/artist/tool",
     },
-    images: ["/images/tool-lateralus.png"],
+    images: ["tool-lateralus.png"],
     counteries: ["us"],
   },
   {
@@ -42,7 +42,7 @@ const events: TimelineEvent[] = [
     links: {
       Spotify: "https://open.spotify.com/artist/tool",
     },
-    images: ["/images/tool-Ænima.png"],
+    images: ["tool-Ænima.png"],
     counteries: ["us"],
   },
   {
@@ -53,7 +53,7 @@ const events: TimelineEvent[] = [
     links: {
       Spotify: "https://open.spotify.com/artist/tool",
     },
-    images: ["/images/tool-underflow.png"],
+    images: ["tool-underflow.png"],
     counteries: ["us"],
   },
 ]

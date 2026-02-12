@@ -8,7 +8,7 @@ const events: TimelineEvent[] = [
     endDate: { year: 1945 },
     tags: ["history:war:ww2"],
     counteries: ["fr", "it", "jp", "ru", "gb", "us", "de", "cn"],
-    images: ["images/ww2.jpg"],
+    images: ["ww2.jpg"],
     description:
       "World War II or the Second World War was a global conflict between two coalitions: the Allies and the Axis powers.",
   },
