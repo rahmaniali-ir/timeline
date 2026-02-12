@@ -2,17 +2,17 @@ import { MAPS_LIST } from "@/constants/maps";
 import { useTimeline } from "@/contexts/timeline";
 import { cn } from "@/lib/utils";
 import type { MapInfo } from "@/types/map";
-import { ChevronDownIcon, CloudyIcon, GlobeIcon, Rotate3dIcon, SparklesIcon } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
+import { CheckIcon, ChevronDownIcon, CloudyIcon, FlagIcon, GlobeIcon, MapPinIcon, Rotate3dIcon, SparklesIcon } from "lucide-react";
+import { useCallback, useMemo, useState, type ReactNode } from "react";
 import { Button } from "../ui/button";
 import { CheckBox } from "./checkBox";
 import { Expandable } from "./expandable";
 
-export function MapThumbnail({ map, className }: { map: MapInfo, className?: string }) {
+export function MapThumbnail({ map, className, children }: { map: MapInfo, className?: string, children?: ReactNode }) {
   const thumbnail = map.thumbnail ? `/maps/thumbnails/${map.thumbnail}` : undefined
 
   return (
-    <div className={cn("size-10 rounded-[inherit] overflow-hidden", className)}>
+    <div className={cn("relative size-10 text-current/15 rounded-[inherit] overflow-hidden", className)}>
       <img
         src={thumbnail}
         alt={map.name}
@@ -21,6 +21,12 @@ export function MapThumbnail({ map, className }: { map: MapInfo, className?: str
           "group-hover/map-select-thumbnail:scale-150 group-active/map-select-thumbnail:scale-125",
         )}
       />
+
+      <div
+        className="absolute inset-0 border-2 border-current rounded-[inherit] transition-all"
+      />
+
+      {children}
     </div>
   )
 }
@@ -78,6 +84,10 @@ export function MapSelect({ open = false, className, setOpen }: { open?: boolean
     setShowGlobeAtmosphere,
     showGlobeSkyBox,
     setShowGlobeSkyBox,
+    showCountryBoundries,
+    showCountryCapitals,
+    setShowCountryCapitals,
+    setShowCountryBoundries,
     globeAutoRotate,
     setGlobeAutoRotate
   } = useTimeline()
@@ -86,7 +96,7 @@ export function MapSelect({ open = false, className, setOpen }: { open?: boolean
 
   const selectedMapId = useMemo(() => selectedGlobeMap.id, [selectedGlobeMap])
 
-  const otherMaps = useMemo(() => MAPS_LIST.filter(map => map.id !== selectedMapId), [selectedMapId])
+  const maps = MAPS_LIST
 
   const isMapSelected = useCallback((mapId: string) => selectedMapId === mapId, [selectedMapId])
 
@@ -104,24 +114,63 @@ export function MapSelect({ open = false, className, setOpen }: { open?: boolean
       className={cn("w-min-content p-px", isOpen && "min-w-[200px]", className)}
       contentClassName="flex flex-col gap-1 px-px"
     >
+      {/* maps */}
       <small className="text-[10px] text-neutral-500 px-1">Other Maps</small>
-      <div className="flex flex-row flex-wrap gap-px w-full">
-        {otherMaps.map(map => (
+      <div className="grid grid-cols-4 gap-1 w-full">
+        {maps.map(map => (
           <Button
             key={map.id}
+            title={map.name}
             onClick={() => setSelectedGlobeMap(map)}
             variant="ghost"
-            className="group/map-select-thumbnail h-auto! w-full! justify-start gap-2 p-1! text-xs"
+            className="group/map group/map-select-thumbnail h-auto! w-auto! max-w-[72px] flex-col gap-1 p-1! text-xs"
           >
-            <MapThumbnail map={map} className="size-8" />
+            <MapThumbnail map={map} className={cn("relative size-8", map.id === selectedGlobeMap.id && "text-primary-500")}>
+              {map.id === selectedGlobeMap.id && (
+                <div
+                  className="animate-fade-in absolute bottom-0 right-0 py-px px-0.5 bg-primary-500 origin-bottom-right rounded-[inherit] rounded-tr-none rounded-bl-none transition-all group-hover/map:scale-110"
+                >
+                  <CheckIcon className="size-2.5 text-neutral-50" strokeWidth={3} />
+                </div>
+              )}
+            </MapThumbnail>
 
-            <span>{map.name}</span>
+            <small
+              className={cn(
+                "text-neutral-500 dark:text-neutral-400 max-w-full text-nowrap overflow-hidden text-ellipsis",
+                "group-hover/map:text-neutral-700 dark:group-hover/map:text-neutral-300",
+                map.id === selectedGlobeMap.id && "text-foreground!"
+              )}
+            >
+              {map.name}
+            </small>
           </Button>
         ))}
       </div>
 
+      {/* viewport options */}
       <small className="text-[10px] text-neutral-500 px-1">Viewport Options</small>
       <div className="flex flex-col gap-px">
+        <Button
+          variant="ghost"
+          className="group/check-box h-auto! p-1! items-center text-xs font-normal justify-start"
+          onClick={() => setShowCountryBoundries(!showCountryBoundries)}
+        >
+          <CheckBox checked={showCountryBoundries} icon={FlagIcon} className="text-sm" />
+
+          <span>Country Boundries</span>
+        </Button>
+
+        <Button
+          variant="ghost"
+          className="group/check-box h-auto! p-1! items-center text-xs font-normal justify-start"
+          onClick={() => setShowCountryCapitals(!showCountryCapitals)}
+        >
+          <CheckBox checked={showCountryCapitals} icon={MapPinIcon} className="text-sm" />
+
+          <span>Country Capitals</span>
+        </Button>
+
         <Button
           variant="ghost"
           className="group/check-box h-auto! p-1! items-center text-xs font-normal justify-start"

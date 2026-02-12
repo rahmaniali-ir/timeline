@@ -34,6 +34,8 @@ interface TimelineContextType {
   showGlobeClouds: boolean
   showGlobeAtmosphere: boolean
   showGlobeSkyBox: boolean
+  showCountryBoundries: boolean
+  showCountryCapitals: boolean
   globeAutoRotate: boolean
   isNight: boolean
   setViewStart: (year: number) => void
@@ -65,6 +67,8 @@ interface TimelineContextType {
   setShowGlobeClouds: (show: boolean) => void
   setShowGlobeAtmosphere: (show: boolean) => void
   setShowGlobeSkyBox: (show: boolean) => void
+  setShowCountryBoundries: (show: boolean) => void
+  setShowCountryCapitals: (show: boolean) => void
   setGlobeAutoRotate: (autoRotate: boolean) => void
 }
 
@@ -83,10 +87,12 @@ const TimelineContext = createContext<TimelineContextType>({
   mapZoom: 1,
   mapPanX: 0,
   mapPanY: 0,
-  selectedGlobeMap: MAPS.default,
+  selectedGlobeMap: MAPS.naturalEarth,
   showGlobeClouds: false,
   showGlobeAtmosphere: false,
   showGlobeSkyBox: false,
+  showCountryBoundries: true,
+  showCountryCapitals: false,
   globeAutoRotate: false,
   isNight: false,
   setViewStart: (_: number) => { },
@@ -117,6 +123,8 @@ const TimelineContext = createContext<TimelineContextType>({
   setShowGlobeClouds: (_: boolean) => { },
   setShowGlobeAtmosphere: (_: boolean) => { },
   setShowGlobeSkyBox: (_: boolean) => { },
+  setShowCountryBoundries: (_: boolean) => { },
+  setShowCountryCapitals: (_: boolean) => { },
   setGlobeAutoRotate: (_: boolean) => { },
   setSelectedGlobeMap: (_: MapInfo) => { },
 })
@@ -142,13 +150,15 @@ export function TimelineProvider({ children }: { children: React.ReactNode }) {
   const [mapPanX, setMapPanX] = useState(0)
   const [mapPanY, setMapPanY] = useState(0)
 
-  const [selectedGlobeMap, setSelectedGlobeMap] = useState(MAPS.default)
+  const [selectedGlobeMap, setSelectedGlobeMap] = useState(MAPS.naturalEarthOcean)
   const [showGlobeClouds, setShowGlobeClouds] = useState(false)
   const [showGlobeAtmosphere, setShowGlobeAtmosphere] = useState(false)
   const [showGlobeSkyBox, setShowGlobeSkyBox] = useState(false)
+  const [showCountryBoundries, setShowCountryBoundries] = useState(true)
+  const [showCountryCapitals, setShowCountryCapitals] = useState(false)
   const [globeAutoRotate, setGlobeAutoRotate] = useState(false)
 
-  const isNight = useMemo(() => selectedGlobeMap.theme === 'dark', [selectedGlobeMap])
+  const isNight = useMemo(() => selectedGlobeMap?.theme === 'dark', [selectedGlobeMap])
 
   const range = useMemo(() => viewEnd - viewStart, [viewEnd, viewStart])
 
@@ -386,12 +396,16 @@ export function TimelineProvider({ children }: { children: React.ReactNode }) {
         showGlobeClouds,
         showGlobeAtmosphere,
         showGlobeSkyBox,
+        showCountryBoundries,
+        showCountryCapitals,
         globeAutoRotate,
         isNight,
         setSelectedGlobeMap: handleSetSelectedGlobeMap,
         setShowGlobeClouds,
         setShowGlobeAtmosphere,
         setShowGlobeSkyBox,
+        setShowCountryBoundries,
+        setShowCountryCapitals,
         setGlobeAutoRotate,
       }}
     >

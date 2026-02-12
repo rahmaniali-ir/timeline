@@ -219,7 +219,7 @@ export default function SpaceScene() {
           enableZoom
           autoRotate={globeAutoRotate}
           autoRotateSpeed={0.5}
-          minDistance={1.25}
+          minDistance={0.5}
           maxDistance={5}
           enableDamping
           dampingFactor={0.05}

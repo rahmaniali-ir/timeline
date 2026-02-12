@@ -35,9 +35,9 @@ export function Globe() {
   const [texture, normalMap, heightMap] = useLoader(
     TextureLoader,
     [
-      `/maps/textures/${selectedGlobeMap.texture}`,
-      `/maps/textures/${selectedGlobeMap.normalMap}`,
-      `/maps/textures/${selectedGlobeMap.heightMap}`,
+      `/maps/textures/lg/${selectedGlobeMap.texture}`,
+      `/maps/textures/lg/${selectedGlobeMap.normalMap}`,
+      `/maps/textures/lg/${selectedGlobeMap.heightMap}`,
     ]
   )
 
@@ -53,7 +53,7 @@ export function Globe() {
         map={texture}
         displacementMap={heightMap}
         normalMap={normalMap}
-        displacementScale={0.01}
+        displacementScale={0.03}
         displacementBias={0.01}
       />
     </mesh>
@@ -63,7 +63,7 @@ export function Globe() {
 export function Clouds() {
   const [cloudsTexture] = useLoader(
     TextureLoader,
-    ['/maps/textures/8k_earth_clouds.jpg']
+    ['/maps/textures/lg/clouds.jpg']
   )
   const meshRef = useRef<Mesh>(null)
 
@@ -111,6 +111,11 @@ function CountryBorders({
   radius?: number,
   groupRefs: React.MutableRefObject<Map<number, any>>
 }) {
+  const { selectedGlobeMap } = useTimeline()
+
+  const { theme } = selectedGlobeMap
+  const isDark = theme === 'dark'
+
   return (
     <group>
       {geojson.features.map((feature, i) => {
@@ -151,7 +156,7 @@ function CountryBorders({
                     console.log(feature.properties?.NAME)
                   }}
                   lineWidth={2}
-                  color='black'
+                  color={isDark ? '#525252' : 'black'}
                 >
                   {/* <lineBasicMaterial color='black' /> */}
                 </Line>
@@ -190,7 +195,7 @@ function VisibleIndicators({
 }
 
 export function Earth() {
-  const { selectedGlobeMap, showGlobeClouds, showGlobeAtmosphere, showGlobeSkyBox } = useTimeline()
+  const { showGlobeClouds, showGlobeAtmosphere, showCountryBoundries, showCountryCapitals } = useTimeline()
   const { camera } = useThree()
 
   const geo = useGeoJSON("/maps/countries.geojson")
@@ -315,18 +320,18 @@ export function Earth() {
       {showGlobeAtmosphere && <Atmosphere />}
 
       {/* Countries */}
-      <CountryBorders
+      {showCountryBoundries && <CountryBorders
         geojson={geo}
         radius={1}
         groupRefs={countryGroupRefs}
-      />
+      />}
 
       {/* indicators */}
       <Hud>
-        <VisibleIndicators
+        {showCountryCapitals && <VisibleIndicators
           indicators={indicators}
           indicatorRefs={indicatorGroupRefs}
-        />
+        />}
       </Hud>
     </group>
   )

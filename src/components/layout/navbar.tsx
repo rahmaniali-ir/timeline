@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils"
-import { BookIcon, ChevronDownIcon, NewspaperIcon } from "lucide-react"
+import { BookIcon, ChevronDownIcon } from "lucide-react"
 import { type HTMLProps, type ReactNode } from "react"
 import { GlobalSearch } from "../core/globalSearch"
 import { MapSelect } from "../core/mapSelect"
@@ -31,14 +31,6 @@ export function MenuBar() {
         <BookIcon className="size-3.5" />
 
         <span className="text-neutral-700 dark:text-neutral-300">Stories</span>
-
-        <ChevronDownIcon className="size-3 ms-1 opacity-50" />
-      </Button>
-
-      <Button variant='ghost' className="h-auto! px-2! py-1">
-        <NewspaperIcon className="size-3.5" />
-
-        <span className="text-neutral-700 dark:text-neutral-300">Blog</span>
 
         <ChevronDownIcon className="size-3 ms-1 opacity-50" />
       </Button>
