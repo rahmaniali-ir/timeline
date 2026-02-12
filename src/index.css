@@ -126,6 +126,32 @@ body {
   --animate-pop-in: pop-in 0.3s ease;
   --animate-pop-out: pop-out 1s ease forwards;
   --animate-scale-y: scale-y 0.3s ease;
+  --animate-fade-in-out: fade-in-out 1s ease infinite;
+  --animate-fade-in-out-long: fade-in-out 3s ease infinite;
+  --animate-fade-in-out-longest: fade-in-out 6s ease infinite;
+  --animate-scale-pulse: scale-pulse 2s ease infinite;
+
+  @keyframes scale-pulse {
+    0%,
+    100% {
+      scale: 1;
+    }
+
+    50% {
+      scale: 1.03;
+    }
+  }
+
+  @keyframes fade-in-out {
+    0%,
+    100% {
+      opacity: 0;
+    }
+
+    50% {
+      opacity: 1;
+    }
+  }
 
   @keyframes fade-in {
     0% {
@@ -251,17 +277,31 @@ body {
   .surface {
     @apply relative isolate rounded-lg;
 
+    &:has(> input:focus) {
+      &::before {
+        @apply bg-neutral-50;
+      }
+    }
+
     &::before {
       @apply absolute inset-0 rounded-[inherit] -z-10;
-      @apply backdrop-blur-sm bg-neutral-300/50;
+      @apply backdrop-blur-sm bg-neutral-300/75;
       @apply border-2 border-neutral-100/25;
 
       content: "";
     }
   }
 
-  .dark .surface::before {
-    @apply bg-neutral-700/50 border-neutral-800/25;
+  .dark .surface {
+    &:has(> input:focus) {
+      &::before {
+        @apply bg-neutral-950;
+      }
+    }
+
+    &::before {
+      @apply bg-neutral-700/50 border-neutral-800/25;
+    }
   }
 
   .mask-none {

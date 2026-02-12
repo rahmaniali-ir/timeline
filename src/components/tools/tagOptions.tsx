@@ -36,7 +36,19 @@ export function TagsOptions() {
 
   return (
     <OptionsGroup name='Tags' icon={TagsIcon} badge={activeTags.length}>
-      <label className='sticky top-0 flex items-center gap-1 px-1.5 bg-neutral-300/50 backdrop-blur-sm rounded-md z-20'>
+      <div className='flex items-center flex-wrap gap-1'>
+        {selectedTags.map(tag => (
+          <TagBadge key={tag.id} tag={tag} onClick={() => toggleTag(tag.id)} />
+        ))}
+
+        {!selectedTags.length && (
+          <div className="flex items-center justify-center text-xs opacity-50 w-full min-h-8.5">
+            <span>No tags selected yet!</span>
+          </div>
+        )}
+      </div>
+
+      <label className='surface sticky top-0 flex items-center gap-1 px-1.5 z-20'>
         <SearchIcon className='size-3 text-neutral-500' />
 
         <input
@@ -47,11 +59,7 @@ export function TagsOptions() {
         />
       </label>
 
-      <div className='flex items-center gap-2'>
-        {selectedTags.map(tag => (
-          <TagBadge key={tag.id} tag={tag} />
-        ))}
-      </div>
+
 
       <NestedList
         list={tagsList}

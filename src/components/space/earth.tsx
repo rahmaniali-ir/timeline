@@ -156,7 +156,7 @@ function CountryBorders({
                     console.log(feature.properties?.NAME)
                   }}
                   lineWidth={2}
-                  color={isDark ? '#525252' : 'black'}
+                  color={isDark ? '#787878' : 'black'}
                 >
                   {/* <lineBasicMaterial color='black' /> */}
                 </Line>

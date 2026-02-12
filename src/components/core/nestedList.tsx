@@ -2,10 +2,7 @@ import { countCharacter } from "@/lib/strings"
 import { cn } from "@/lib/utils"
 import type { ListItem } from "@/types/list"
 import {
-  CheckIcon,
-  ChevronDownIcon,
-  MinusIcon,
-  SquircleIcon,
+  ChevronDownIcon
 } from "lucide-react"
 import { useCallback, useMemo, useState } from "react"
 import { Button } from "../ui/button"
@@ -66,13 +63,13 @@ export function NestedItem({
     <div
       onMouseEnter={() => onMouseEnter?.(id)}
       onMouseLeave={() => onMouseLeave?.(id)}
-      className='flex flex-col rounded-sm bg-neutral-200'
+      className='flex flex-col rounded-sm bg-neutral-200 dark:bg-neutral-800'
     >
       {/* header */}
       <div
         className={cn(
-          "group/tag-toggle relative flex items-center gap-1 p-1 justify-start rounded-[inherit] bg-neutral-100/50 transition-all duration-100 hover:bg-neutral-100",
-          hovered && "bg-neutral-100",
+          "group/tag-toggle relative flex items-center gap-1 p-1 justify-start rounded-[inherit] bg-neutral-100/50 dark:bg-neutral-900/50 transition-all duration-100 hover:bg-neutral-100 dark:hover:bg-neutral-900",
+          hovered && "bg-neutral-100 dark:bg-neutral-900",
           className
         )}
       >
@@ -130,8 +127,9 @@ export function NestedItem({
 
           <span
             className={cn(
-              "text-xs text-neutral-500 pointer-events-none",
-              selected && "text-neutral-800"
+              "text-xs text-current/50 pointer-events-none",
+              hovered && "text-current/75",
+              selected && "text-current"
             )}
           >
             {name}
@@ -142,7 +140,7 @@ export function NestedItem({
         {hasChildren && (
           <Button
             onClick={toggleOpen}
-            className='size-auto! p-0.5! ms-auto bg-neutral-200 hover:bg-neutral-50'
+            className='size-auto! p-0.5! ms-auto bg-neutral-200 dark:bg-neutral-800 hover:bg-neutral-50'
           >
             <ChevronDownIcon
               className={cn(

@@ -51,7 +51,7 @@ export function OptionsGroup({
             <div
               className={cn(
                 "absolute py-0.5 px-1 left-full top-full -translate-x-1/3 -translate-y-1/2",
-                "text-[8px] bg-neutral-400 text-neutral-100 leading-none rounded-full",
+                "text-[8px] bg-neutral-400 text-background leading-none rounded-full",
                 "transition-all duration-300",
                 "opacity-0 scale-75",
                 "group-hover/tags-option-toggle:-translate-y-2/3",

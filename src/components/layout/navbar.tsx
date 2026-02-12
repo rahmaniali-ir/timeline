@@ -47,12 +47,12 @@ export function Navbar({
 }) {
   return (
     <nav className={cn("flex items-center gap-2", className)}>
-      <div className='flex flex-col items-start gap-1'>
+      <div className='flex flex-col items-start gap-2'>
         <MenuBar />
 
-        <TimelineRange className="surface before:opacity-50 before:bg-background! before:backdrop-blur-none ps-2 pe-4 py-2" />
+        <TimelineRange className="surface before:bg-background/50! ps-1.5 pe-4 py-2" />
 
-        <MapSelect className="ms-2" />
+        <MapSelect />
       </div>
 
       <div className="fixed top-4 left-1/2 -translate-x-1/2 flex items-start gap-2 mx-auto">

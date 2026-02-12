@@ -25,16 +25,12 @@ export function TimelineOptions({ className }: { className?: string }) {
       <div className='flex items-center gap-1 justify-end'>
         <Button
           size='icon-sm'
-          variant='ghost'
-          className="backdrop-blur-sm"
         >
           <Share2Icon className='size-3' />
         </Button>
 
         <Button
           size='icon-sm'
-          variant='ghost'
-          className="backdrop-blur-sm"
         >
           <UploadIcon className='size-3' />
         </Button>
@@ -42,15 +38,13 @@ export function TimelineOptions({ className }: { className?: string }) {
         <Button
           onClick={toggleOpen}
           size='icon-sm'
-          variant='ghost'
-          className="backdrop-blur-sm"
         >
           <ListTreeIcon className='size-3' />
         </Button>
       </div>
 
       {isOpen && (
-        <div className='flex flex-col gap-1 min-w-[250px]'>
+        <div className='flex flex-col gap-1 min-w-[250px] max-w-[30vw]'>
           <TagsOptions />
 
           <PeopleOptions />

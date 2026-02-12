@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import type { Icon } from "@/types/icon";
-import { CheckIcon, MinusIcon, SquircleIcon } from "lucide-react";
+import { CheckIcon, PlusIcon, SquircleIcon } from "lucide-react";
 
 export function CheckBox({ checked, mixed, color, className, iconClassName, ...props }: { checked?: boolean, mixed?: boolean, icon?: Icon, color?: string, className?: string, iconClassName?: string }) {
   return (<div className={cn('relative', className)}>
@@ -11,8 +11,8 @@ export function CheckBox({ checked, mixed, color, className, iconClassName, ...p
       checked && "opacity-75"
     )} /> : <SquircleIcon
       className={cn(
-        "size-[1em] text-neutral-400",
-        "group-hover/tag-toggle:text-neutral-500"
+        "size-[1em] text-current/25",
+        "group-hover/tag-toggle:text-current/50"
       )}
     />}
 
@@ -27,10 +27,11 @@ export function CheckBox({ checked, mixed, color, className, iconClassName, ...p
         strokeWidth={4}
       />
     ) : mixed ? (
-      <MinusIcon
+      <PlusIcon
         className={cn(
-          "size-1.5 absolute top-1/2 left-1/2 -translate-1/2 text-neutral-600"
+          "size-2 absolute top-1/2 left-1/2 -translate-1/2 text-current/75"
         )}
+        strokeWidth={1.5}
       />
     ) : null}
   </div>)

@@ -11,9 +11,11 @@ import {
   ClapperboardIcon,
   CrownIcon,
   EarthIcon,
+  FlaskConicalIcon,
   Gamepad2Icon,
   HammerIcon,
   MapPinIcon,
+  MicroscopeIcon,
   MonitorIcon,
   MusicIcon,
   PaletteIcon,
@@ -24,7 +26,7 @@ import {
   UsersIcon,
 } from "lucide-react"
 
-export const TAGS: EventTag[] = [
+const history: EventTag[] = [
   {
     id: "history",
     name: "History",
@@ -46,7 +48,7 @@ export const TAGS: EventTag[] = [
   {
     id: "history:country:ir",
     name: "Iran",
-    color: "oklch(69.6% 0.17 162.48)",
+    color: "#0284c7",
     icon: IranIcon,
   },
   {
@@ -179,7 +181,7 @@ export const TAGS: EventTag[] = [
   },
   {
     id: "history:war",
-    name: "Wars",
+    name: "War",
     color: "red",
     icon: CarFrontIcon,
   },
@@ -243,6 +245,9 @@ export const TAGS: EventTag[] = [
     color: "blue",
     icon: ChurchIcon,
   },
+]
+
+const knowledge: EventTag[] = [
   {
     id: "knowledge",
     name: "Knowledge",
@@ -265,13 +270,13 @@ export const TAGS: EventTag[] = [
     id: "knowledge:chemistry",
     name: "Chemistry",
     color: "oklch(58.5% 0.233 277.117)",
-    icon: AtomIcon,
+    icon: FlaskConicalIcon,
   },
   {
     id: "knowledge:biology",
     name: "Biology",
     color: "oklch(58.5% 0.233 277.117)",
-    icon: AtomIcon,
+    icon: MicroscopeIcon,
   },
   {
     id: "knowledge:psychology",
@@ -291,6 +296,9 @@ export const TAGS: EventTag[] = [
     color: "oklch(58.5% 0.233 277.117)",
     icon: RocketIcon,
   },
+]
+
+const art: EventTag[] = [
   {
     id: "art",
     name: "Art",
@@ -448,3 +456,5 @@ export const TAGS: EventTag[] = [
     icon: TimerIcon,
   },
 ]
+
+export const TAGS: EventTag[] = [...history, ...knowledge, ...art]

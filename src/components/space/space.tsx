@@ -1,4 +1,5 @@
 import { useTimeline } from '@/contexts/timeline'
+import { cn } from '@/lib/utils'
 import { Html, OrbitControls } from '@react-three/drei'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react'
@@ -61,11 +62,27 @@ function DeferredLoadingManager() {
 
 function LoadingScreen() {
   return (
-    <Html fullscreen>
-      <div
-        className='size-full flex items-center justify-center font-bold text-2xl bg-background'
+    <Html fullscreen className='size-full flex items-center justify-center bg-background'>
+      {/* background */}
+      <div className={cn(
+        "animate-fade-in-out-long absolute inset-0 overflow-hidden",
+        "bg-[radial-gradient(ellipse_at_center,var(--color-neutral-300),transparent)]",
+        "dark:bg-[radial-gradient(ellipse_at_center,var(--color-neutral-900),transparent)]",
+      )}
       >
-        Loading...
+        {/* background circle */}
+        <div
+          className="size-[70vmin] animate-scale-pulse animate-fade-in-out-longest absolute left-1/2 top-1/2 -translate-1/2 bg-background rounded-full"
+          style={{
+            animationDelay: '1s'
+          }}
+        />
+      </div>
+
+      {/* loading */}
+      <div className='relative tracking-wide text-sm font-light'>
+        <span className='opacity-25'>Loading</span>
+        <span className='absolute top-0 left-0 animate-fade-in-out'>Loading</span>
       </div>
     </Html>
   )
@@ -205,6 +222,7 @@ function AutoRotateController() {
 
   return null
 }
+
 export default function SpaceScene() {
   const { isNight, globeAutoRotate, showGlobeSkyBox } = useTimeline()
 
