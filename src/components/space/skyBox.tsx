@@ -6,7 +6,7 @@ export function SkyBox() {
   const { isNight } = useTimeline()
   const texture = useLoader(
     TextureLoader,
-    `/maps/textures/${isNight ? '8k_stars_milky_way.jpg' : '8k_stars_milky_way_light.jpg'}`
+    `/maps/textures/lg/${isNight ? 'stars.jpg' : 'starsLight.jpg'}`
   )
 
   return (

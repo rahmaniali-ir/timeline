@@ -112,7 +112,7 @@ export function MapSelect({ open = false, className, setOpen }: { open?: boolean
       isOpen={isOpen}
       trigger={<MapSelectTrigger isOpen={isOpen} map={selectedGlobeMap} onClick={toggleOpen} />}
       className={cn("w-min-content p-px", isOpen && "min-w-[200px]", className)}
-      contentClassName="flex flex-col gap-1 px-px"
+      contentClassName="flex flex-col gap-1 px-1"
     >
       {/* maps */}
       <small className="text-[10px] text-neutral-500 px-1">Other Maps</small>
@@ -125,7 +125,7 @@ export function MapSelect({ open = false, className, setOpen }: { open?: boolean
             variant="ghost"
             className="group/map group/map-select-thumbnail h-auto! w-auto! max-w-[72px] flex-col gap-1 p-1! text-xs"
           >
-            <MapThumbnail map={map} className={cn("relative size-8", map.id === selectedGlobeMap.id && "text-primary-500")}>
+            <MapThumbnail map={map} className={cn("relative size-10", map.id === selectedGlobeMap.id && "text-primary-500")}>
               {map.id === selectedGlobeMap.id && (
                 <div
                   className="animate-fade-in absolute bottom-0 right-0 py-px px-0.5 bg-primary-500 origin-bottom-right rounded-[inherit] rounded-tr-none rounded-bl-none transition-all group-hover/map:scale-110"
