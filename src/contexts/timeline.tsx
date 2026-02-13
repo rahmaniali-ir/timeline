@@ -14,6 +14,7 @@ import {
   useState,
 } from "react"
 import { useTheme } from "./theme"
+import { FONTS } from "@/constants/fonts"
 
 interface TimelineContextType {
   viewStart: number
@@ -150,7 +151,7 @@ export function TimelineProvider({ children }: { children: React.ReactNode }) {
   const [mapPanX, setMapPanX] = useState(0)
   const [mapPanY, setMapPanY] = useState(0)
 
-  const [selectedGlobeMap, setSelectedGlobeMap] = useState(MAPS.naturalEarthOcean)
+  const [selectedGlobeMap, setSelectedGlobeMap] = useState(MAPS.blue)
   const [showGlobeClouds, setShowGlobeClouds] = useState(false)
   const [showGlobeAtmosphere, setShowGlobeAtmosphere] = useState(false)
   const [showGlobeSkyBox, setShowGlobeSkyBox] = useState(false)
@@ -329,6 +330,31 @@ export function TimelineProvider({ children }: { children: React.ReactNode }) {
     },
     [setSelectedGlobeMap]
   )
+
+  useEffect(() => {
+    let fontName = selectedGlobeMap.font
+
+    if (fontName) {
+      fontName = fontName.split(",")[0]
+      const font = FONTS[fontName]
+
+      console.log("map font", fontName, font);
+
+      if (!font) return
+
+      const linkTag = document.createElement('link')
+      linkTag.rel = 'stylesheet'
+      linkTag.href = font
+      document.head.appendChild(linkTag)
+
+      document.body.style.setProperty('--map-font', fontName)
+
+      return () => {
+        document.head.removeChild(linkTag)
+        document.body.style.removeProperty('--map-font')
+      }
+    }
+  }, [selectedGlobeMap])
 
   useEffect(() => {
     const paramTagsString = params["tags"] || undefined

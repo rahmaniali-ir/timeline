@@ -8,4 +8,7 @@ export interface MapInfo {
   normalMap?: string
   heightMap?: string
   thumbnail?: string
+  countryBorderColor?: string
+  atmosphereColor?: string
+  font?: string
 }

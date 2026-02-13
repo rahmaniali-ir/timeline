@@ -274,6 +274,10 @@ body {
 }
 
 @layer utilities {
+  .map-font {
+    font-family: var(--map-font);
+  }
+
   .surface {
     @apply relative isolate rounded-lg;
 

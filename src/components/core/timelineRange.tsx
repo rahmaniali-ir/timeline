@@ -20,7 +20,7 @@ export function TimelineRange({ className }: { className?: string }) {
         <small className="ps-1 text-neutral-500 dark:text-neutral-400 text-[10px] leading-none">To</small>
       </div>
 
-      <RangeList className="group-hover/timeline-range:opacity-100 opacity-0 transition-opacity" />
+      <RangeList className="group-focus-within/timeline-range:opacity-100 group-hover/timeline-range:opacity-100 opacity-0 transition-opacity" />
     </div>
   )
 }

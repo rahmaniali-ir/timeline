@@ -25,7 +25,7 @@ function RangeListItem({
     <Button
       onClick={onClick}
       variant='ghost'
-      className='size-auto! flex-col p-1 gap-0 px-2 items-start bg-neutral-100/50 text-xs'
+      className='size-auto! flex-col p-1 gap-0 px-2 items-start text-xs'
     >
       <span className='font-normal pe-4'>{name}</span>
 
@@ -69,7 +69,7 @@ export function RangeList({ className }: { className?: string }) {
       </Button>
 
       {isOpen && (
-        <div className='absolute top-[calc(100%+var(--spacing))] -left-1 flex flex-col gap-1 rounded-lg bg-neutral-200 p-1'>
+        <div className='surface absolute! top-[calc(100%+var(--spacing))] -left-1 flex flex-col gap-1 p-1'>
           <strong className='text-xs font-semibold text-neutral-500 px-2 py-1 pt-0.5'>
             Ranges
           </strong>

@@ -87,7 +87,9 @@ export function Clouds() {
 }
 
 export function Atmosphere() {
-  const { isNight } = useTimeline()
+  const { isNight, selectedGlobeMap } = useTimeline()
+
+  const { atmosphereColor } = selectedGlobeMap
 
   return (
     <mesh scale={[1.08, 1.08, 1.08]}>
@@ -95,7 +97,13 @@ export function Atmosphere() {
 
       <meshStandardMaterial
         transparent
-        color={isNight ? '#141833' : '#33A1B8'}
+        color={
+          atmosphereColor
+            ? atmosphereColor
+            : isNight
+              ? '#141833'
+              : '#33A1B8'
+        }
         opacity={0.2}
       />
     </mesh>
@@ -108,12 +116,12 @@ function CountryBorders({
   groupRefs
 }: {
   geojson: any,
-  radius?: number,
+  radius?: number
   groupRefs: React.MutableRefObject<Map<number, any>>
 }) {
   const { selectedGlobeMap } = useTimeline()
 
-  const { theme } = selectedGlobeMap
+  const { theme, countryBorderColor } = selectedGlobeMap
   const isDark = theme === 'dark'
 
   return (
@@ -151,15 +159,19 @@ function CountryBorders({
                 <Line
                   key={`${i}-${j}`}
                   points={points}
+                  color={
+                    countryBorderColor
+                      ? countryBorderColor
+                      : isDark
+                        ? '#787878'
+                        : 'black'
+                  }
+                  lineWidth={2}
                   onPointerOver={(e) => {
                     e.stopPropagation()
                     console.log(feature.properties?.NAME)
                   }}
-                  lineWidth={2}
-                  color={isDark ? '#787878' : 'black'}
-                >
-                  {/* <lineBasicMaterial color='black' /> */}
-                </Line>
+                />
               )
             })}
           </group>
