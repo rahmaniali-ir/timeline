@@ -30,6 +30,7 @@ export const MAPS: Record<string, MapInfo> = {
     countryBorderColor: "darkgray",
     atmosphereColor: "#78acc4",
     font: "Vend Sans, sans-serif",
+    starsColor: "#a1c0c0",
   },
   atlas: {
     id: "atlas",

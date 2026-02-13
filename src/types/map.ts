@@ -11,4 +11,5 @@ export interface MapInfo {
   countryBorderColor?: string
   atmosphereColor?: string
   font?: string
+  starsColor?: string
 }

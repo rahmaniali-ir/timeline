@@ -3,19 +3,26 @@ import { useLoader } from "@react-three/fiber"
 import { useTimeline } from "@/contexts/timeline"
 
 export function SkyBox() {
-  const { isNight } = useTimeline()
-  const texture = useLoader(
+  const { isNight, selectedGlobeMap } = useTimeline()
+
+  const [starsTexture, starsNormalMap] = useLoader(
     TextureLoader,
-    `/maps/textures/lg/${isNight ? 'stars.jpg' : 'starsLight.jpg'}`
+    [
+      `/maps/textures/lg/${isNight ? 'stars.jpg' : 'starsLight.jpg'}`,
+      '/maps/textures/lg/starsNormalMap.png'
+    ]
   )
+
+  const { starsColor } = selectedGlobeMap
 
   return (
     <mesh>
       <sphereGeometry args={[50, 64, 64]} />
       <meshStandardMaterial
-        map={texture}
+        map={starsTexture}
+        normalMap={starsNormalMap}
         side={BackSide}
-        roughness={0}
+        color={starsColor}
       />
     </mesh>
   )
