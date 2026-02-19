@@ -21,3 +21,5 @@ export interface LinkAsset {
 }
 
 export type Links = Record<string, LinkAsset>
+
+export type Quality = "low" | "medium" | "high"

@@ -1,15 +1,14 @@
-import { TextureLoader, BackSide } from "three"
-import { useLoader } from "@react-three/fiber"
 import { useTimeline } from "@/contexts/timeline"
+import { useTexture } from "@/hooks/useTexture"
+import { BackSide } from "three"
 
 export function SkyBox() {
   const { isNight, selectedGlobeMap } = useTimeline()
 
-  const [starsTexture, starsNormalMap] = useLoader(
-    TextureLoader,
+  const [starsTexture, starsNormalMap] = useTexture(
     [
-      `/maps/textures/lg/${isNight ? 'stars.jpg' : 'starsLight.jpg'}`,
-      '/maps/textures/lg/starsNormalMap.png'
+      `${isNight ? 'stars.jpg' : 'starsLight.jpg'}`,
+      'starsNormalMap.jpg'
     ]
   )
 

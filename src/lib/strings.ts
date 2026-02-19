@@ -8,10 +8,19 @@ export function getChildrenIds(ids: string[], parentId: string) {
   return ids.filter(
     id =>
       id.startsWith(parentId + ":") &&
-      countCharacter(id, ":") === countCharacter(parentId, ":") + 1
+      countCharacter(id, ":") === countCharacter(parentId, ":") + 1,
   )
 }
 
 export function getClenSearchKey(searchKey: string) {
   return searchKey.toLowerCase().trim()
+}
+
+export function capitalize(value: string) {
+  return value
+    .split(" ")
+    .map(word =>
+      word.at(0)?.toUpperCase()?.concat(word.slice(1).toLocaleLowerCase()),
+    )
+    .join(" ")
 }

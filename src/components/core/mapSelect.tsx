@@ -1,4 +1,4 @@
-import { MAPS_LIST } from "@/constants/maps";
+import { MAPS_LIST as maps } from "@/constants/maps";
 import { useTimeline } from "@/contexts/timeline";
 import { cn } from "@/lib/utils";
 import type { MapInfo } from "@/types/map";
@@ -7,6 +7,9 @@ import { useCallback, useMemo, useState, type ReactNode } from "react";
 import { Button } from "../ui/button";
 import { CheckBox } from "./checkBox";
 import { Expandable } from "./expandable";
+import type { Quality } from "@/types/core";
+import { ButtonGroup } from "../ui/button-group";
+import { capitalize } from "@/lib/strings";
 
 export function MapThumbnail({ map, className, children }: { map: MapInfo, className?: string, children?: ReactNode }) {
   const thumbnail = map.thumbnail ? `/maps/thumbnails/${map.thumbnail}` : undefined
@@ -74,6 +77,28 @@ export function MapSelectTrigger({ map, isOpen, className, onClick }: { map: Map
   )
 }
 
+export function QualitySelect({ className }: { className?: string }) {
+  const { quality, setQuality } = useTimeline()
+
+  const qualities: Quality[] = ['low', 'medium', 'high']
+
+  return (
+    <ButtonGroup className={cn("flex", className)}>
+      {qualities.map(q => (
+        <Button
+          key={q}
+          variant={q === quality ? 'primary' : 'default'}
+          onClick={() => setQuality(q)}
+          size='sm'
+          className="h-auto! py-1 px-2"
+        >
+          <span className="text-xs font-normal">{capitalize(q)}</span>
+        </Button>
+      ))}
+    </ButtonGroup>
+  )
+}
+
 export function MapSelect({ open = false, className, setOpen }: { open?: boolean, className?: string, setOpen?: (open: boolean) => void }) {
   const {
     selectedGlobeMap,
@@ -95,8 +120,6 @@ export function MapSelect({ open = false, className, setOpen }: { open?: boolean
   const [isOpen, setIsOpen] = useState(open)
 
   const selectedMapId = useMemo(() => selectedGlobeMap.id, [selectedGlobeMap])
-
-  const maps = MAPS_LIST
 
   const isMapSelected = useCallback((mapId: string) => selectedMapId === mapId, [selectedMapId])
 
@@ -125,8 +148,8 @@ export function MapSelect({ open = false, className, setOpen }: { open?: boolean
             variant="ghost"
             className="group/map group/map-select-thumbnail h-auto! w-auto! max-w-[72px] flex-col gap-1 p-1! text-xs"
           >
-            <MapThumbnail map={map} className={cn("relative size-10", map.id === selectedGlobeMap.id && "text-primary-500")}>
-              {map.id === selectedGlobeMap.id && (
+            <MapThumbnail map={map} className={cn("relative size-10", isMapSelected(map.id) && "text-primary-500")}>
+              {isMapSelected(map.id) && (
                 <div
                   className="animate-fade-in absolute bottom-0 right-0 py-px px-0.5 bg-primary-500 origin-bottom-right rounded-[inherit] rounded-tr-none rounded-bl-none transition-all group-hover/map:scale-110"
                 >
@@ -147,6 +170,9 @@ export function MapSelect({ open = false, className, setOpen }: { open?: boolean
           </Button>
         ))}
       </div>
+
+      <small className="text-[10px] text-neutral-500 px-1">Qualities</small>
+      <QualitySelect className="mb-2" />
 
       {/* viewport options */}
       <small className="text-[10px] text-neutral-500 px-1">Viewport Options</small>

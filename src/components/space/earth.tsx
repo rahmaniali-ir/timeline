@@ -1,45 +1,50 @@
-import { COUNTRIES_LIST } from "@/constants/countries"
+import { COUNTRIES, COUNTRIES_LIST } from "@/constants/countries"
+import { TEXTURES } from "@/constants/textures"
 import { useTimeline } from "@/contexts/timeline"
-import { latLngToVector3 as latLngToVector3Util } from "@/lib/space"
+import { useGeoJSON } from "@/hooks/useGeoJSON"
+import { useTexture } from "@/hooks/useTexture"
+import { latLngToVector3, latLngToVector3 as latLngToVector3Util } from "@/lib/space"
 import type { Indicator } from "@/types/indicator"
+import type { LatLngRange } from "@/types/space"
 import { Hud, Line } from "@react-three/drei"
-import { useFrame, useLoader, useThree } from "@react-three/fiber"
-import { useMemo, useRef, useState } from "react"
-import { FileLoader, Mesh, TextureLoader, Vector3 } from "three"
+import { useFrame, useThree } from "@react-three/fiber"
+import { useMemo, useRef } from "react"
+import { Mesh, Vector3 } from "three"
 import { EventIndicator } from "./eventIndicator"
 
-function latLngToVector3(
-  lat: number,
-  lng: number,
-  radius: number
-) {
-  const phi = (90 - lat) * Math.PI / 180
-  const theta = (lng + 180) * Math.PI / 180
-
-  return new Vector3(
-    -radius * Math.sin(phi) * Math.cos(theta),
-    radius * Math.cos(phi),
-    radius * Math.sin(phi) * Math.sin(theta)
-  )
-}
 
 
-function useGeoJSON(url: string) {
-  const data = useLoader(FileLoader, url)
-  return JSON.parse(data)
+/** Center of a lat/lng range for visibility tests */
+function latLngRangeCenter(range: LatLngRange) {
+  return {
+    lat: (range.from.lat + range.to.lat) / 2,
+    lng: (range.from.lng + range.to.lng) / 2,
+  }
 }
 
 export function Globe() {
-  const { selectedGlobeMap } = useTimeline()
+  const { selectedGlobeMap, quality } = useTimeline()
 
-  const [texture, normalMap, heightMap] = useLoader(
-    TextureLoader,
+  const [texture, normalMap, heightMap] = useTexture(
     [
-      `/maps/textures/lg/${selectedGlobeMap.texture}`,
-      `/maps/textures/lg/${selectedGlobeMap.normalMap}`,
-      `/maps/textures/lg/${selectedGlobeMap.heightMap}`,
+      selectedGlobeMap.texture,
+      selectedGlobeMap.normalMap ?? TEXTURES.normalMap,
+      selectedGlobeMap.heightMap ?? TEXTURES.heightMap,
     ]
   )
+
+  const sphereSize = useMemo(() => {
+    switch (quality) {
+      case 'low':
+        return 128
+
+      case 'medium':
+        return 256
+
+      case 'high':
+        return 512
+    }
+  }, [quality])
 
   return (
     <mesh
@@ -47,7 +52,7 @@ export function Globe() {
     // onPointerOver={(e) => (e.object.scale.set(1.05, 1.05, 1.05))}
     // onPointerOut={(e) => (e.object.scale.set(1, 1, 1))}
     >
-      <sphereGeometry args={[1, 256, 256]} />
+      <sphereGeometry args={[1, sphereSize, sphereSize]} />
 
       <meshStandardMaterial
         map={texture}
@@ -61,10 +66,8 @@ export function Globe() {
 }
 
 export function Clouds() {
-  const [cloudsTexture] = useLoader(
-    TextureLoader,
-    ['/maps/textures/lg/clouds.jpg']
-  )
+  const [cloudsTexture] = useTexture(['clouds.jpg'])
+
   const meshRef = useRef<Mesh>(null)
 
   useFrame((_, delta) => {
@@ -212,7 +215,6 @@ export function Earth() {
 
   const geo = useGeoJSON("/maps/countries.geojson")
 
-  const [isNight] = useState(false)
   // Use refs to store visibility data to avoid state updates during render
   const visibleFeaturesRef = useRef<Set<number>>(new Set())
   const visibleIndicatorsRef = useRef<Set<string>>(new Set())
@@ -236,27 +238,47 @@ export function Earth() {
     return indicators
   }, [])
 
-  // Pre-compute country feature centers for faster visibility checks
+  // Map GeoJSON feature index -> country id (by name) for latLngRange-based visibility
+  const featureCountryIdByIndex = useMemo(() => {
+    if (!geo) return new Map<number, string>()
+    const nameToId = new Map(
+      COUNTRIES_LIST.map((c) => [c.name.toLowerCase(), c.id])
+    )
+    const out = new Map<number, string>()
+    geo.features.forEach((feature: any, i: number) => {
+      const name =
+        feature.properties?.NAME ?? feature.properties?.ADMIN ?? feature.properties?.name
+      if (name && nameToId.has(name.toLowerCase())) {
+        out.set(i, nameToId.get(name.toLowerCase())!)
+      }
+    })
+    return out
+  }, [geo])
+
+  // Pre-compute country feature centers using latLngRange when available, else geometry
   const countryCenters = useMemo(() => {
     if (!geo) return []
 
-    return geo.features.map((feature: any) => {
+    return geo.features.map((feature: any, i: number) => {
+      const countryId = featureCountryIdByIndex.get(i)
+      const country = countryId ? COUNTRIES[countryId] : null
+      if (country?.latLngRange) {
+        const center = latLngRangeCenter(country.latLngRange)
+        return latLngToVector3(center.lat, center.lng, 1).normalize()
+      }
       if (!feature.geometry) return null
-
       const polygons =
         feature.geometry.type === "MultiPolygon"
           ? feature.geometry.coordinates
           : [feature.geometry.coordinates]
-
       const firstPoint = polygons[0]?.[0]?.[0] // [lng, lat]
       if (firstPoint) {
         const [lng, lat] = firstPoint
         return latLngToVector3(lat, lng, 1).normalize()
       }
-
       return null
     })
-  }, [geo])
+  }, [geo, featureCountryIdByIndex])
 
   // Throttled visibility check - only every 5 frames and if camera moved significantly
   useFrame(() => {
@@ -291,13 +313,17 @@ export function Earth() {
       }
     })
 
-    // Check which indicators are visible
+    // Check which indicators are visible using country latLngRange center
     const newVisibleIndicators = new Set<string>()
     indicators.forEach((indicator) => {
-      if (indicator.latLng) {
-        const pointPos = latLngToVector3Util(indicator.latLng.lat, indicator.latLng.lng, 1).normalize()
+      const countryId = indicator.id.split("-")[0]
+      const country = COUNTRIES[countryId]
+      const center = country?.latLngRange
+        ? latLngRangeCenter(country.latLngRange)
+        : indicator.latLng
+      if (center) {
+        const pointPos = latLngToVector3Util(center.lat, center.lng, 1).normalize()
         const dotProduct = pointPos.dot(cameraDirection)
-
         if (dotProduct > 0) {
           newVisibleIndicators.add(indicator.id)
         }

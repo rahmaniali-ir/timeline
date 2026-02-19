@@ -1,8 +1,10 @@
 import { EVENTS } from "@/constants/events"
+import { FONTS } from "@/constants/fonts"
 import { MAPS } from "@/constants/maps"
 import { TAGS } from "@/constants/tags"
 import { BIG_BANG_YEAR, WORLD_MAX, WORLD_MIN } from "@/constants/world"
 import { useParams } from "@/hooks/useParams"
+import type { Quality } from "@/types/core"
 import type { EventTag, TimelineEvent } from "@/types/event"
 import type { MapInfo } from "@/types/map"
 import {
@@ -14,7 +16,6 @@ import {
   useState,
 } from "react"
 import { useTheme } from "./theme"
-import { FONTS } from "@/constants/fonts"
 
 interface TimelineContextType {
   viewStart: number
@@ -39,6 +40,7 @@ interface TimelineContextType {
   showCountryCapitals: boolean
   globeAutoRotate: boolean
   isNight: boolean
+  quality: Quality,
   setViewStart: (year: number) => void
   setViewEnd: (year: number) => void
   toPercent: (year: number) => number
@@ -71,6 +73,7 @@ interface TimelineContextType {
   setShowCountryBoundries: (show: boolean) => void
   setShowCountryCapitals: (show: boolean) => void
   setGlobeAutoRotate: (autoRotate: boolean) => void
+  setQuality: (quality: Quality) => void
 }
 
 const TimelineContext = createContext<TimelineContextType>({
@@ -96,38 +99,40 @@ const TimelineContext = createContext<TimelineContextType>({
   showCountryCapitals: false,
   globeAutoRotate: false,
   isNight: false,
-  setViewStart: (_: number) => { },
-  setViewEnd: (_: number) => { },
-  toPercent: (_: number) => 0,
+  quality: 'medium',
+  setViewStart: (_) => { },
+  setViewEnd: (_) => { },
+  toPercent: (_) => 0,
   setEvents: () => { },
-  isEventInView: (_: TimelineEvent) => false,
+  isEventInView: (_) => false,
   setTags: () => { },
   setActiveTags: () => { },
-  isTagActive: (_: string) => false,
-  toggleTag: (_: string) => { },
-  startCountryHovering: (_: string) => { },
-  endCountryHovering: (_: string) => { },
-  getTagEvents: (_: string) => [],
-  setHoveredCountries: (_: string[]) => { },
-  setSelectedCountries: (_: string[]) => { },
-  isCountrySelected: (_: string) => false,
-  selectCountry: (_: string) => { },
-  deselectCountry: (_: string) => { },
-  toggleCountrySelection: (_: string) => { },
-  setHoveredEvents: (_: TimelineEvent[]) => { },
-  setSelectedEvents: (_: TimelineEvent[]) => { },
-  getTag: (_: string) => undefined,
+  isTagActive: (_) => false,
+  toggleTag: (_) => { },
+  startCountryHovering: (_) => { },
+  endCountryHovering: (_) => { },
+  getTagEvents: (_) => [],
+  setHoveredCountries: (_) => { },
+  setSelectedCountries: (_) => { },
+  isCountrySelected: (_) => false,
+  selectCountry: (_) => { },
+  deselectCountry: (_) => { },
+  toggleCountrySelection: (_) => { },
+  setHoveredEvents: (_) => { },
+  setSelectedEvents: (_) => { },
+  getTag: (_) => undefined,
   getActiveTags: () => [],
-  setMapZoom: (_: number | ((prev: number) => number)) => { },
-  setMapPanX: (_: number | ((prev: number) => number)) => { },
-  setMapPanY: (_: number | ((prev: number) => number)) => { },
-  setShowGlobeClouds: (_: boolean) => { },
-  setShowGlobeAtmosphere: (_: boolean) => { },
-  setShowGlobeSkyBox: (_: boolean) => { },
-  setShowCountryBoundries: (_: boolean) => { },
-  setShowCountryCapitals: (_: boolean) => { },
-  setGlobeAutoRotate: (_: boolean) => { },
-  setSelectedGlobeMap: (_: MapInfo) => { },
+  setMapZoom: (_) => { },
+  setMapPanX: (_) => { },
+  setMapPanY: (_) => { },
+  setShowGlobeClouds: (_) => { },
+  setShowGlobeAtmosphere: (_) => { },
+  setShowGlobeSkyBox: (_) => { },
+  setShowCountryBoundries: (_) => { },
+  setShowCountryCapitals: (_) => { },
+  setGlobeAutoRotate: (_) => { },
+  setSelectedGlobeMap: (_) => { },
+  setQuality: (_) => { }
 })
 
 export function TimelineProvider({ children }: { children: React.ReactNode }) {
@@ -158,6 +163,8 @@ export function TimelineProvider({ children }: { children: React.ReactNode }) {
   const [showCountryBoundries, setShowCountryBoundries] = useState(true)
   const [showCountryCapitals, setShowCountryCapitals] = useState(false)
   const [globeAutoRotate, setGlobeAutoRotate] = useState(false)
+
+  const [quality, setQuality] = useState<Quality>('low')
 
   const isNight = useMemo(() => selectedGlobeMap?.theme === 'dark', [selectedGlobeMap])
 
@@ -433,6 +440,9 @@ export function TimelineProvider({ children }: { children: React.ReactNode }) {
         setShowCountryBoundries,
         setShowCountryCapitals,
         setGlobeAutoRotate,
+
+        quality,
+        setQuality
       }}
     >
       {children}
